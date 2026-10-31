@@ -45,3 +45,5 @@ jobs:
         run: python -m benchmarks.bugs.humanize_30.reproduce
       - name: Verify historical issue candidate patch
         run: python -m benchmarks.bugs.humanize_30.reproduce --candidate
+      - name: Reproduce independent humanize non-finite input issue 333
+        run: python -m benchmarks.bugs.humanize_333.reproduce
