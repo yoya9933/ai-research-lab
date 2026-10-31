@@ -5,13 +5,35 @@ import json
 from pathlib import Path
 
 
+def _case_identity(item):
+    """Canonical JSON identity preserves bool/int/float differences in cases."""
+    try:
+        return json.dumps(
+            [item["task"], item["args"], item["expected"]],
+            sort_keys=True, ensure_ascii=False, allow_nan=False,
+            separators=(",", ":"),
+        )
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Invalid evaluator case identity") from exc
+
+
 def compare(baseline, candidate):
     for report in (baseline, candidate):
+        if not isinstance(report, dict):
+            raise ValueError("Invalid evaluator report or inconsistent score")
         cases = report.get("cases")
         if (
             not isinstance(cases, list)
             or not cases
-            or any(type(item.get("passed")) is not bool for item in cases)
+            or any(
+                not isinstance(item, dict)
+                or not isinstance(item.get("task"), str)
+                or not item["task"]
+                or not isinstance(item.get("args"), (tuple, list))
+                or "expected" not in item
+                or type(item.get("passed")) is not bool
+                for item in cases
+            )
             or type(report.get("total")) is not int
             or type(report.get("passed")) is not int
             or report["total"] != len(cases)
@@ -25,7 +47,7 @@ def compare(baseline, candidate):
     if baseline["total"] != candidate["total"]:
         raise ValueError("Case count differs")
     for before, after in zip(baseline["cases"], candidate["cases"]):
-        if any(before.get(key) != after.get(key) for key in ("task", "args", "expected")):
+        if _case_identity(before) != _case_identity(after):
             raise ValueError("Case order, input or expected answer differs")
 
     pairs = zip(baseline["cases"], candidate["cases"])

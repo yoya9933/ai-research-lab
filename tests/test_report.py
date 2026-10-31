@@ -52,6 +52,37 @@ class CompareTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Invalid"):
             compare(self.original, self.candidate)
 
+    def test_reject_equal_but_different_json_types(self):
+        for task, expected, replacement in (
+            ("clamp", 5, 5.0),
+            ("fibonacci", 1, True),
+        ):
+            with self.subTest(task=task, replacement=repr(replacement)):
+                changed = copy.deepcopy(self.candidate)
+                case = next(
+                    c for c in changed["cases"]
+                    if c["task"] == task and type(c["expected"]) is type(expected)
+                    and c["expected"] == expected
+                )
+                self.assertEqual(case["expected"], replacement)
+                case["expected"] = replacement
+                with self.assertRaisesRegex(ValueError, "differs"):
+                    compare(self.original, changed)
+
+    def test_reject_missing_case_identity_from_both_reports(self):
+        before = copy.deepcopy(self.original)
+        after = copy.deepcopy(self.candidate)
+        del before["cases"][0]["expected"]
+        del after["cases"][0]["expected"]
+        with self.assertRaisesRegex(ValueError, "Invalid"):
+            compare(before, after)
+
+    def test_reject_non_mapping_case_with_value_error(self):
+        changed = copy.deepcopy(self.candidate)
+        changed["cases"][0] = None
+        with self.assertRaisesRegex(ValueError, "Invalid"):
+            compare(self.original, changed)
+
     def test_detect_regression(self):
         changed = copy.deepcopy(self.candidate)
         good = next(c for c in changed["cases"] if c["task"] == "is_prime" and c["passed"])
