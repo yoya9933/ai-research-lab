@@ -11,16 +11,16 @@ Requires Python 3.10+:
 ```bash
 python -m unittest discover -s tests -v
 python -m lab evaluate --module lab.buggy --output results/baseline.json
-python -m lab evaluate --module lab.solutions --output results/reference.json
+python -m lab evaluate --module lab.solutions --output results/reference.json --require-all-pass
 ```
 
-`lab.buggy` contains 10 deliberate defects. `lab.solutions` is a reference answer key, **not** an AI-generated result. Generated results are excluded from Git by default.
+The intentionally defective baseline is expected to fail some cases. `--require-all-pass` returns exit status 1 if any case fails, so CI can enforce successful repairs. `lab.solutions` is the reference answer key, **not** an AI-generated result. Generated results are excluded from Git by default.
 
 ## Chat-first research workflow
 
 1. Choose one function from `lab/buggy.py`; read its cases in `lab/cases.py`. **Do not read `lab/solutions.py` until after your attempt.**
 2. Write a prediction, root-cause hypothesis, and intended fix in a new experiment Markdown file.
-3. Make a candidate module with the same function names and evaluate it:
+3. Create a candidate module with the same function names and evaluate it:
    ```bash
    python -m lab evaluate --module lab.candidate --output results/attempt.json
    ```

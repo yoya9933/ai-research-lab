@@ -14,5 +14,5 @@ jobs:
           python-version: '3.11'
       - name: Run standard-library tests
         run: python -m unittest discover -s tests -v
-      - name: Smoke-test evaluator
-        run: python -m lab evaluate --module lab.solutions
+      - name: Check reference evaluation
+        run: python -m lab evaluate --module lab.solutions --require-all-pass
