@@ -20,3 +20,5 @@ python -m benchmarks.bugs.humanize_30.reproduce --candidate
 ```
 
 The repair is stored as a small, anchored [patch](patch.py). It creates a temporary copy of the pinned upstream package, rounds whole minutes/hours **before** decomposition, and runs the original caller-visible API. The pristine baseline remains unchanged. See [experiment 009](../../../experiments/009-historical-humanize-repair.md). Only the scope of the historical report is claimed, not a general replacement for the upstream maintainer's fix.
+
+Another independent human submitted a [related singular-minute report (#20)](https://github.com/python-humanize/humanize/issues/20): `precisedelta(3633, minimum_unit="minutes", format="%0.0f")` produced `1 hour and 1 minutes` instead of `1 hour and 1 minute`. The previously committed candidate is re-tested against this case *without being modified*. See [experiment 010](../../../experiments/010-related-humanize-report.md). These are related symptoms, not independent underlying defects.

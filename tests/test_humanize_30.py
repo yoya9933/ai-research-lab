@@ -16,6 +16,9 @@ class HumanizeIssue30Tests(unittest.TestCase):
     def test_related_plural_artifact_is_reproduced(self):
         self.assertEqual(self.observed["round_hours"], "1 day and 1 hours")
 
+    def test_independent_issue_20_report_is_reproduced(self):
+        self.assertEqual(self.observed["singular_minute"], "1 hour and 1 minutes")
+
     def test_default_precision_is_unchanged(self):
         self.assertEqual(self.observed["default"], "8 hours, 59 minutes and 59 seconds")
 

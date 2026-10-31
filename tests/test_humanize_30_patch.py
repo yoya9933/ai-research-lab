@@ -22,6 +22,9 @@ class HumanizeIssue30RepairTests(unittest.TestCase):
     def test_rounded_hour_uses_singular_noun(self):
         self.assertEqual(self.candidate["round_hours"], "1 day and 1 hour")
 
+    def test_related_issue_20_plural_regression(self):
+        self.assertEqual(self.candidate["singular_minute"], "1 hour and 1 minute")
+
     def test_default_precision_is_preserved(self):
         self.assertEqual(self.candidate["default"], "8 hours, 59 minutes and 59 seconds")
 

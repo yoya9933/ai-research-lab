@@ -19,6 +19,7 @@ import json
 print(json.dumps({
     "round_minutes": humanize.precisedelta(32399, minimum_unit="minutes", format="%0.0f"),
     "round_hours": humanize.precisedelta(91500, minimum_unit="hours", format="%0.0f"),
+    "singular_minute": humanize.precisedelta(3633, minimum_unit="minutes", format="%0.0f"),
     "default": humanize.precisedelta(32399),
     "fractional": humanize.precisedelta(32399, minimum_unit="minutes"),
 }))
