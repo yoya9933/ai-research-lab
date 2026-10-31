@@ -61,13 +61,13 @@ print(json.dumps({
 """
 
 
-def observe(vendor=VENDOR):
+def observe(vendor=VENDOR, script=SCRIPT):
     """Run only the trusted pinned local source in a separate process."""
     environment = os.environ.copy()
     environment["PYTHONPATH"] = str(vendor)
     environment["REPLAY_FILEUTILS"] = str(Path(vendor) / "boltons" / "fileutils.py")
     completed = subprocess.run(
-        [sys.executable, "-c", SCRIPT], env=environment, capture_output=True,
+        [sys.executable, "-c", script], env=environment, capture_output=True,
         text=True, check=True, timeout=15,
     )
     return json.loads(completed.stdout)
