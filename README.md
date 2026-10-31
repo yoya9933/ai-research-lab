@@ -71,3 +71,7 @@ python -m lab.report results/exercism-starter.json results/exercism-attempt.json
 ```
 
 See [experiment 005](experiments/005-external-chat-attempt.md). This is explicitly **unblinded** educational exercise completion, not independent evidence of AI capability growth.
+
+## Pre-registered second trial
+
+The [second exercise trial](benchmarks/exercism/trial_002/README.md) contains three candidates committed **before** the external upstream test files are fetched. The chronology and limitations are recorded in [experiment 006](experiments/006-pretest-candidate.md). This is a stronger exposure-control method, not proof that pretrained model knowledge is absent.
