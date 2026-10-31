@@ -26,12 +26,12 @@ print(json.dumps({
 """
 
 
-def observe(vendor=VENDOR):
+def observe(vendor=VENDOR, script=SCRIPT):
     """Import the pinned code in a separate Python process; never use installed humanize."""
     environment = os.environ.copy()
     environment["PYTHONPATH"] = str(vendor)
     completed = subprocess.run(
-        [sys.executable, "-c", SCRIPT], env=environment, capture_output=True,
+        [sys.executable, "-c", script], env=environment, capture_output=True,
         text=True, check=True, timeout=15,
     )
     return json.loads(completed.stdout)
