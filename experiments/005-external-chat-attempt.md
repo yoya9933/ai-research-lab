@@ -4,7 +4,7 @@ Date: 2026-11-01
 External benchmark baseline commit: [2167eae](https://github.com/yoya9933/ai-research-lab/commit/2167eae37aff936b0cc9895f4a8add21bbf2dc14)
 Source: [Exercism Python pinned commit](https://github.com/exercism/python/commit/6105f6d9d3ef66ce3d5c8f529d2882af3d76b706)
 Candidate module set: `benchmarks/exercism/attempt_001/`
-Status: awaiting GitHub Actions verification
+Status: CI verified (27 unit tests passed), no blind evaluation
 
 ## Method and predictions
 
@@ -17,6 +17,10 @@ python -m benchmarks.exercism.runner starter --output results/exercism-starter.j
 python -m benchmarks.exercism.runner attempt_001 --output results/exercism-attempt.json --require-all-pass
 python -m lab.report results/exercism-starter.json results/exercism-attempt.json
 ```
+
+## Verified CI evidence
+
+[Run #41222284970](https://github.com/yoya9933/ai-research-lab/actions/runs/41222284970) recorded 0/29 starter and 29/29 candidate tests passing; 29 fixes and 0 regressions on the published upstream tests.
 
 ## Interpretation
 
