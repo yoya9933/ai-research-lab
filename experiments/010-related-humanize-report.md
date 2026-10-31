@@ -5,7 +5,7 @@ New external report: [humanize issue #20](https://github.com/python-humanize/hum
 Reused original pinned pre-fix source: `9528daf55fd7178c025f7294b8e349f8b3524175`
 Related first report: [issue #30](https://github.com/python-humanize/humanize/issues/30)
 Patch already frozen in main: `c2be95d34bd5271b90b851b38f5d02db00c67086`
-Status: awaiting CI reproduction
+Status: CI verified; candidate unchanged
 
 ## Human report
 
@@ -20,6 +20,10 @@ python -m benchmarks.bugs.humanize_30.reproduce
 python -m benchmarks.bugs.humanize_30.reproduce --candidate
 python -m unittest discover -s tests -v
 ```
+
+## Verified result
+
+[GitHub Actions run #41224621330](https://github.com/yoya9933/ai-research-lab/actions/runs/41224621330) passed **43 unit tests**. The unchanged baseline printed `1 hour and 1 minutes`, while the same already committed candidate printed `1 hour and 1 minute`. All prior checks also passed.
 
 ## Interpretation
 
