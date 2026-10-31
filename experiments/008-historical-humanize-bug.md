@@ -3,7 +3,7 @@
 Date: 2026-11-01
 Upstream issue: https://github.com/python-humanize/humanize/issues/30
 Pinned pre-fix source: `9528daf55fd7178c025f7294b8e349f8b3524175`
-Status: baseline pending CI verification; no repair measured yet.
+Status: baseline reproduced and verified by CI; no repair measured yet.
 
 ## Goal
 
@@ -22,6 +22,10 @@ python -m unittest discover -s tests -v
 ```
 
 Test assertions intentionally check that the historical **defective** output is present. This stage is the baseline only; a second Git commit/PR must implement a candidate repair and verify corrected outputs without overwriting the original source snapshot.
+
+## Verified baseline
+
+[GitHub Actions run #41224280254](https://github.com/yoya9933/ai-research-lab/actions/runs/41224280254) ran **35 passing unit tests** and executed the pinned original package. It printed `8 hours and 60 minutes` and `1 day and 1 hours`, matching the reporter and follow-up report. These are reproduced **bugs**, not passing repair cases.
 
 ## Validity limitations
 
