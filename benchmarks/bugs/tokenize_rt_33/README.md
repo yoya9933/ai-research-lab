@@ -8,3 +8,17 @@
 - **Reproduce:** `python -m benchmarks.bugs.tokenize_rt_33.reproduce` and `python -m unittest tests.test_tokenize_rt_33 -v`. A trusted subprocess imports only the pinned module and compares six inputs: three defective no-EOL samples (number, assignment, non-ASCII identifier) and three EOL controls. Each also checks roundtrip preservation. The baseline **expects the buggy output**, not a repair.
 
 **Limits:** The upstream original tests use pytest; no external packages/tests are installed or silently represented as run. These six samples are reporter/investigator-visible, not held-out. Only Python 3.11 on GitHub Ubuntu is tested; this is a separate upstream codebase but not independent blind performance evidence. No model API, key, other agent or external code execution outside GitHub Actions.
+
+## Isolated local candidate (unblinded)
+
+`patch.py` copies the frozen single-module snapshot to a temporary directory
+while excluding inherited Python bytecode caches, and changes only the empty
+synthetic `NEWLINE` offset computation to use the original source line.
+The exact upstream anchor must match once; the vendored module and MIT
+license remain byte-for-byte unchanged.
+
+Run `python -m unittest tests.test_tokenize_rt_33_candidate -v`. It
+repeats the **same six inputs**: three no-EOL offsets should change from 0
+to 1, 3, and 4 UTF-8 bytes, while three EOL offsets and all six
+roundtrips should remain unchanged. These are visible, correlated
+investigator-controlled samples, **not** blind or independent ability scores.
