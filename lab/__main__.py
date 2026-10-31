@@ -1,0 +1,47 @@
+"""Run deterministic cases against a trusted Python module."""
+
+import argparse
+import importlib
+import json
+from pathlib import Path
+
+from .cases import CASES
+
+
+def evaluate(module):
+    results = []
+    for name, cases in CASES.items():
+        function = getattr(module, name, None)
+        if not callable(function):
+            raise ValueError(f"Missing callable: {name}")
+        for args, expected in cases:
+            try:
+                actual = function(*args)
+                passed = type(actual) is type(expected) and actual == expected
+                error = None
+            except Exception as exc:
+                actual, passed, error = None, False, f"{type(exc).__name__}: {exc}"
+            results.append({"task": name, "args": args, "expected": expected,
+                            "actual": actual, "passed": passed, "error": error})
+    return {"passed": sum(r["passed"] for r in results), "total": len(results),
+            "cases": results}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("command", choices=["evaluate"])
+    parser.add_argument("--module", required=True, help="Trusted importable Python module")
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    report = evaluate(importlib.import_module(args.module))
+    print(f"{report['passed']}/{report['total']} cases passed")
+    for item in report["cases"]:
+        print(f"{'PASS' if item['passed'] else 'FAIL'} {item['task']}: {item['args']}")
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str) + "\n",
+                               encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()
