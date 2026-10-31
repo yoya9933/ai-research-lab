@@ -12,6 +12,7 @@ Requires Python 3.10+:
 python -m unittest discover -s tests -v
 python -m lab evaluate --module lab.buggy --output results/baseline.json
 python -m lab evaluate --module lab.solutions --output results/reference.json --require-all-pass
+python -m lab evaluate --module lab.attempt_001 --output results/attempt_001.json
 ```
 
 The intentionally defective baseline is expected to fail some cases. `--require-all-pass` returns exit status 1 if any case fails, so CI can enforce successful repairs. `lab.solutions` is the reference answer key, **not** an AI-generated result. Generated results are excluded from Git by default.
@@ -26,6 +27,8 @@ The intentionally defective baseline is expected to fail some cases. `--require-
    ```
 4. Compare outcomes and retain both successes and failures in the research log.
 5. Open a GitHub PR with code changes, tests and evidence.
+
+The [first recorded repair](experiments/001-debugging.md) is explicitly **unblinded** because the assistant had already inspected the reference answer key. It demonstrates the workflow, not independent model ability.
 
 **Security:** `--module` imports and executes Python code in the current process. Only evaluate trusted local modules. This is **not a sandbox**.
 
