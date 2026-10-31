@@ -9,9 +9,9 @@ BASELINE = {
     "number_without_eol": {"newline": [1, 0, ""], "roundtrip": True},
     "assignment_without_eol": {"newline": [1, 0, ""], "roundtrip": True},
     "unicode_without_eol": {"newline": [1, 0, ""], "roundtrip": True},
-    "number_with_eol": {"newline": [1, 1, "\\n"], "roundtrip": True},
-    "assignment_with_eol": {"newline": [1, 3, "\\n"], "roundtrip": True},
-    "unicode_with_eol": {"newline": [1, 4, "\\n"], "roundtrip": True},
+    "number_with_eol": {"newline": [1, 1, "\n"], "roundtrip": True},
+    "assignment_with_eol": {"newline": [1, 3, "\n"], "roundtrip": True},
+    "unicode_with_eol": {"newline": [1, 4, "\n"], "roundtrip": True},
 }
 SOURCE_SHA = "98f72cee984b23f138dd88208dbdb438e1745673"
 LICENSE_SHA = "522fbe20b89911bb8d68b4a684a51225dd571764"
