@@ -16,3 +16,7 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Check reference evaluation
         run: python -m lab evaluate --module lab.solutions --require-all-pass
+      - name: Record baseline and first chat attempt
+        run: |
+          python -m lab evaluate --module lab.buggy
+          python -m lab evaluate --module lab.attempt_001
