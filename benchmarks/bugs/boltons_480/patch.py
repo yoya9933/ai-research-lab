@@ -4,7 +4,7 @@ Only a temporary copy is changed; pinned upstream and BSD license remain intact.
 """
 
 from pathlib import Path
-from shutil import copytree
+from shutil import copytree, ignore_patterns
 
 from .reproduce import VENDOR
 
@@ -17,7 +17,7 @@ NEW = (
 
 def make_candidate(destination: Path) -> Path:
     destination = Path(destination)
-    copytree(VENDOR, destination)
+    copytree(VENDOR, destination, ignore=ignore_patterns("__pycache__", "*.pyc"))
     target = destination / "boltons" / "fileutils.py"
     original = target.read_text(encoding="utf-8")
     if original.count(OLD) != 1:
