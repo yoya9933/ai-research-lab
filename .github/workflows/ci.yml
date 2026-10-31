@@ -53,3 +53,5 @@ jobs:
         run: python -m benchmarks.bugs.humanize_486.reproduce
       - name: Verify isolated humanize negative-ordinal candidate and controls
         run: python -m unittest tests.test_humanize_486_candidate -v
+      - name: Record post-freeze tokenize-rt edge observations
+        run: python -m benchmarks.bugs.tokenize_rt_33.followup
