@@ -36,3 +36,8 @@ jobs:
         run: |
           python -m benchmarks.exercism.runner attempt_001 --output results/exercism-attempt.json --require-all-pass
           python -m lab.report results/exercism-starter.json results/exercism-attempt.json
+      - name: Score post-freeze external tests
+        run: |
+          python -m benchmarks.exercism.runner starter_002 --output results/starter_002.json
+          python -m benchmarks.exercism.runner attempt_002 --output results/attempt_002.json
+          python -m lab.report results/starter_002.json results/attempt_002.json
