@@ -2,7 +2,7 @@
 
 Date: 2026-11-01
 Frozen repair: `lab.attempt_001` (committed before these tests)
-Status: pending CI verification; **not a blinded experiment**
+Status: **CI verified**, **not a blinded experiment**
 
 ## Question
 
@@ -24,6 +24,10 @@ The same inputs are also fed to the original buggy implementations, which must f
 python -m unittest discover -s tests -p test_properties.py -v
 python -m unittest discover -s tests -v
 ```
+
+## Verified run
+
+[GitHub Actions run #41221907522](https://github.com/yoya9933/ai-research-lab/actions/runs/41221907522) passed **24 unittest methods**, including the three property tests spanning 411 deterministic inputs. The unchanged candidate passed all the new checks; the intentionally buggy implementations had detectable violations. No model API was invoked.
 
 ## Limits
 
