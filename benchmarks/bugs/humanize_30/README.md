@@ -12,3 +12,11 @@ The report gives the reproduction `precisedelta(32399, minimum_unit="minutes", f
 Run with `python -m benchmarks.bugs.humanize_30.reproduce`; the subprocess imports the pinned, copied package and prints the observed results. `tests/test_humanize_30.py` verifies the *buggy baseline*, so a passing test here means that a defect was reproduced, **not repaired**.
 
 This is a real third-party bug report with a reproduction, but not independent of model training; the historical issue and fix are public. The original upstream fix code was not used to design this baseline.
+
+## Local candidate repair
+
+```bash
+python -m benchmarks.bugs.humanize_30.reproduce --candidate
+```
+
+The repair is stored as a small, anchored [patch](patch.py). It creates a temporary copy of the pinned upstream package, rounds whole minutes/hours **before** decomposition, and runs the original caller-visible API. The pristine baseline remains unchanged. See [experiment 009](../../../experiments/009-historical-humanize-repair.md). Only the scope of the historical report is claimed, not a general replacement for the upstream maintainer's fix.

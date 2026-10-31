@@ -1,10 +1,12 @@
 """Reproduce a third-party user-reported issue using a pinned source snapshot."""
 
+import argparse
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 
 VENDOR = Path(__file__).resolve().parent / "upstream"
 ISSUE = "https://github.com/python-humanize/humanize/issues/30"
@@ -35,9 +37,20 @@ def observe(vendor=VENDOR):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--candidate", action="store_true",
+                        help="Evaluate a patched temporary copy, leaving the upstream snapshot pristine")
+    args = parser.parse_args()
+    if args.candidate:
+        from .patch import make_candidate
+        with tempfile.TemporaryDirectory() as directory:
+            observed = observe(make_candidate(Path(directory) / "patched"))
+    else:
+        observed = observe()
     print(json.dumps({
         "issue": ISSUE, "upstream_commit": UPSTREAM_COMMIT,
-        "observed": observe(),
+        "variant": "candidate" if args.candidate else "baseline",
+        "observed": observed,
     }, indent=2))
 
 

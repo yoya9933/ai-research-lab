@@ -87,3 +87,9 @@ python -m benchmarks.bugs.humanize_30.reproduce
 ```
 
 This is a true third-party bug *report*; a replay is not evidence of independent model performance.
+
+To try the [minimal candidate repair](experiments/009-historical-humanize-repair.md) without touching the original snapshot:
+
+```bash
+python -m benchmarks.bugs.humanize_30.reproduce --candidate
+```
