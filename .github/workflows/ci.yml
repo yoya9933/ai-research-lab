@@ -47,3 +47,5 @@ jobs:
         run: python -m benchmarks.bugs.humanize_30.reproduce --candidate
       - name: Reproduce independent humanize non-finite input issue 333
         run: python -m benchmarks.bugs.humanize_333.reproduce
+      - name: Verify isolated issue 333 candidate and finite overflow guard
+        run: python -m unittest tests.test_humanize_333_candidate -v

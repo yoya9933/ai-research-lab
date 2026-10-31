@@ -23,3 +23,14 @@ and failure mode from rounding issue #30; it is **not blind** because the report
 and its suggested fix are public. Preserve the pristine source snapshot when
 testing a candidate. Do not silently turn the intentionally failing baseline
 cases into expected successes.
+
+## Candidate (not blind)
+
+`patch.py` copies the frozen snapshot into a temporary directory, then catches
+`OverflowError` **only around the initial integer-conversion guard**. This
+returns `inf` and `-inf` as text without masking overflow from constructing
+a `timedelta` with an excessively large finite input. Baseline and candidate
+use the exact same six observations; `tests/test_humanize_333_candidate.py`
+checks both corrected cases and all four controls. This is a targeted local
+repair informed by the public issue, **not a blind AI benchmark**. CI results
+are the only execution evidence; no additional model inference or API calls.
