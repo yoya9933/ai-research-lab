@@ -10,3 +10,17 @@
 The nine recorded observations include three buggy revocation outcomes (`after_revoke_other`, `after_revoke_group`, `chmod_mode`) and six controls (initial mode, representation, construction, widening, empty permissions, invalid input). All writes and chmod operations are restricted to a temporary directory; GitHub CI executes on Ubuntu. A successful **baseline** asserts historical wrong behavior, not a repaired candidate.
 
 **Limitations:** Reporter assertions plus investigator-written controls were read before writing these tests; this is neither an independent held-out score nor evidence of AI improvement. The external issue already discloses its diagnosis and proposed solution. No upstream changes or independent security audit are claimed. This reproduces a permission-state discrepancy on a pinned Python implementation, not every platform or permission feature.
+
+## Isolated local candidate (public, unblinded)
+
+`patch.py` copies the pinned upstream tree to a temporary directory and
+replaces the single descriptor update with a masked three-bit assignment,
+so changing one class of permissions clears only that class's old bits.
+The anchor must occur exactly once; the original source and license stay
+untouched.
+
+Run `python -m unittest tests.test_boltons_480_candidate -v` for the
+same nine inputs: **3 corrected revocation outcomes** and **6 unchanged
+controls**. The candidate is informed by the reporter's published diagnosis
+and is **not** a blind or independently scored repair. No upstream patch is
+submitted and no general security claim is made.
