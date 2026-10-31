@@ -77,3 +77,13 @@ See [experiment 005](experiments/005-external-chat-attempt.md). This is explicit
 The [second exercise trial](benchmarks/exercism/trial_002/README.md) contains three candidates committed **before** the external upstream test files are fetched. The chronology and limitations are recorded in [experiment 006](experiments/006-pretest-candidate.md). This is a stronger exposure-control method, not proof that pretrained model knowledge is absent.
 
 The second trial's [original 44 upstream tests](experiments/007-postfreeze-upstream-tests.md) were imported *after* candidate commit `f714ff6`. Run the `starter_002` and `attempt_002` tracks to compare results without altering the frozen candidate. This controls **current-conversation test exposure only**, not pretrained knowledge.
+
+## Real-world bug reproduction
+
+A [historical, independently reported humanize bug](benchmarks/bugs/humanize_30/README.md) is pinned to its **pre-fix upstream commit**. The code is vendored under MIT terms so CI can reproduce the reporter's output with no package download or model API:
+
+```bash
+python -m benchmarks.bugs.humanize_30.reproduce
+```
+
+This is a true third-party bug *report*; a replay is not evidence of independent model performance.
