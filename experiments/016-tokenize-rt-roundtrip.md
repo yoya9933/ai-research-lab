@@ -1,0 +1,8 @@
+# Experiment 016: a secondary tokenize-rt roundtrip candidate
+
+- **Date:** 2026-11-01 (Taiwan).
+- **Preexisting failure, objectively observed:** [post-freeze CI 41253159050](https://github.com/yoya9933/ai-research-lab/actions/runs/41253159050) ran seven additional cases after the first candidate was frozen. It reported `roundtrip: false` for both `"x=1 "` and `"ä=1 "` in **original and first-candidate** outputs. The first candidate corrected 4 byte offsets and regressed none, but did **not** repair these two source-preservation defects.
+- **Suspected second root cause:** the old tokenizer emits an artificial empty `NEWLINE` on no-EOL input; when its reported `line` is empty, `line[last_col:scol]` loses an actual trailing-whitespace span even though `lines[sline]` still holds it.
+- **New independent local candidate:** reuse `benchmarks.bugs.tokenize_rt_33.patch.make_candidate` from the frozen first repair and **only then** patch the whitespace extraction in that copied module; exact source anchor one occurrence. Preserve MIT-licensed upstream and the first candidate unchanged. No inherited bytecode caches.
+- **Test protocol:** same seven post-freeze cases against the original, first and extended candidates. Verify both previous roundtrip failures are corrected, remaining five observations are unchanged, all seven expected offset values remain correct, and neither new regression nor selective omission occurs. Full per-case JSON is printed by a separate CI step.
+- **Validity:** these two losses were first discovered in this same chat's prior follow-up, not externally reported; no new blinded independent benchmark case, not a public upstream acceptance or security guarantee. Tested on Python 3.11 GitHub CI only, no paid API or other agent.
