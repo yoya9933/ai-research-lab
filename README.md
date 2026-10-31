@@ -37,3 +37,7 @@ The [first recorded repair](experiments/001-debugging.md) is explicitly **unblin
 This lab can measure correctness on a fixed test suite and record reproducible repair attempts. It **cannot control or measure ChatGPT's internal reasoning tokens**, automatically invoke a chat model from GitHub Actions, or operate unattended. No accuracy claims should be made from the included reference code alone.
 
 Read the [experiment protocol](docs/PROTOCOL.md), [roadmap](docs/ROADMAP.md), and [contributor rules](AGENTS.md).
+
+## Post-commit follow-up
+
+Use `--suite followup` to grade 20 additional cases introduced after the first candidate was committed. Read [experiment 002](experiments/002-followup.md) for precise provenance and why the results are **not** independently blinded.
