@@ -1,7 +1,7 @@
 """Small local candidate for public boltons rotate_file issue #479."""
 
 from pathlib import Path
-from shutil import copytree
+from shutil import copytree, ignore_patterns
 
 from benchmarks.bugs.boltons_480.reproduce import VENDOR
 
@@ -12,7 +12,8 @@ NEW = "    if os.path.exists(kept_names[-1]):\n        os.remove(kept_names[-1])
 def make_candidate(destination: Path) -> Path:
     """Patch only a disposable copy, leaving the pinned source byte-identical."""
     destination = Path(destination)
-    copytree(VENDOR, destination)
+    # Same-size source edits can accidentally reuse timestamp-based .pyc caches.
+    copytree(VENDOR, destination, ignore=ignore_patterns("__pycache__", "*.pyc"))
     target = destination / "boltons" / "fileutils.py"
     original = target.read_text(encoding="utf-8")
     if original.count(OLD) != 1:

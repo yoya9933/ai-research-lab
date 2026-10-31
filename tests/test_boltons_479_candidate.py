@@ -24,7 +24,15 @@ class Boltons479CandidateTests(unittest.TestCase):
         cls.baseline = observe()
         cls.temp = tempfile.TemporaryDirectory()
         try:
-            cls.candidate = observe(make_candidate(Path(cls.temp.name) / "patched"))
+            candidate_dir = make_candidate(Path(cls.temp.name) / "patched")
+            cls.copied_caches = [
+                str(path) for path in candidate_dir.rglob("*")
+                if path.name == "__pycache__" or path.suffix == ".pyc"
+            ]
+            cls.patched_source = (
+                candidate_dir / "boltons" / "fileutils.py"
+            ).read_text(encoding="utf-8")
+            cls.candidate = observe(candidate_dir)
         except BaseException:
             cls.temp.cleanup()
             raise
@@ -32,6 +40,13 @@ class Boltons479CandidateTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.temp.cleanup()
+
+    def test_candidate_copy_has_no_stale_bytecode(self):
+        self.assertEqual(self.copied_caches, [])
+        self.assertLess(
+            self.patched_source.index("    if os.path.exists(kept_names[-1]):"),
+            self.patched_source.index("    fns = [filename] + kept_names"),
+        )
 
     def test_pristine_source_still_reproduces_report(self):
         self.assertEqual(self.baseline, BASELINE)
