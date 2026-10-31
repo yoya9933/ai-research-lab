@@ -3,7 +3,7 @@
 Date: 2026-11-01
 Candidate: `lab.attempt_001`
 Candidate frozen before test authoring: [main commit bd7eb01](https://github.com/yoya9933/ai-research-lab/commit/bd7eb01cf6f0f9c9d89bd569794dcc99b7482ee9)
-Status: pending CI verification; **not independently blinded**
+Status: **CI verified**; **not independently blinded**
 
 ## Purpose
 
@@ -25,6 +25,10 @@ python -m lab evaluate --module lab.buggy --suite followup
 python -m lab evaluate --module lab.attempt_001 --suite followup
 python -m lab evaluate --module lab.solutions --suite followup --require-all-pass
 ```
+
+## Verified execution
+
+GitHub Actions [run #41221613750](https://github.com/yoya9933/ai-research-lab/actions/runs/41221613750) recorded **14 passing unit tests** and these exact outcomes: original baseline 11/24, original candidate 16/24, reference 24/24; follow-up baseline **8/20**, unchanged candidate **11/20**, reference 20/20. The candidate was not altered after its previous commit.
 
 ## Threats to validity
 
