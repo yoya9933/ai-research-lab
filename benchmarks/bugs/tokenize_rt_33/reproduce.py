@@ -44,14 +44,14 @@ print(json.dumps(out, ensure_ascii=False))
 """
 
 
-def observe(vendor=VENDOR):
+def observe(vendor=VENDOR, script=SCRIPT):
     environment = os.environ.copy()
     environment["PYTHONPATH"] = str(vendor)
     environment["REPLAY_TOKENIZER"] = str(
         Path(vendor) / "tokenize_rt.py"
     )
     process = subprocess.run(
-        [sys.executable, "-c", SCRIPT], env=environment,
+        [sys.executable, "-c", script], env=environment,
         capture_output=True, text=True, check=True, timeout=15,
     )
     return json.loads(process.stdout)

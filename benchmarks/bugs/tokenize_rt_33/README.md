@@ -22,3 +22,17 @@ repeats the **same six inputs**: three no-EOL offsets should change from 0
 to 1, 3, and 4 UTF-8 bytes, while three EOL offsets and all six
 roundtrips should remain unchanged. These are visible, correlated
 investigator-controlled samples, **not** blind or independent ability scores.
+
+## Post-commit edge suite (2026-11-01)
+
+The local issue #33 candidate was already merged in
+[PR #27](https://github.com/yoya9933/ai-research-lab/pull/27)
+before the seven new edge inputs were authored. The candidate is **not
+modified** for this follow-up. Run
+`python -m benchmarks.bugs.tokenize_rt_33.followup` for full original
+and candidate JSON records, corrected/regressed offsets and any remaining
+source-roundtrip failures; the same assertions run under standard-library
+unittest discovery. The extra cases include trailing spaces, multibyte
+Unicode, multiline input, LF, CRLF and an empty input. Report roundtrip
+limitations rather than hiding them. This is a post-commit *conversation
+exposure* check, **not** independent or blinded evaluation.
