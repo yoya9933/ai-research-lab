@@ -2,7 +2,7 @@
 
 Date: 2026-11-01
 Baseline commit: `9beb8bf0cd4915f7d24af5bd2e5cce11e06c00dc`
-Status: submitted for automated verification, **not blinded**
+Status: **CI verified**, explicitly **not blinded**
 Model interface: ChatGPT conversation; no model API or paid model calls
 Candidate: `lab/attempt_001.py`
 
@@ -35,6 +35,17 @@ python -m lab evaluate --module lab.attempt_001 --output results/attempt_001.jso
 ```
 
 `tests/test_attempt_001.py` asserts the expected counts, requires all three selected functions to pass, and verifies all other case outcomes remain unchanged.
+
+## Verified results
+
+GitHub Actions [run #41221401336](https://github.com/yoya9933/ai-research-lab/actions/runs/41221401336) executed the commands on the committed code and printed:
+
+- Standard-library unit tests: **11 passed**.
+- Reference answer key: **24/24 cases passed** (not a model result).
+- Buggy baseline: **11/24 cases passed**.
+- Chat-authored partial repair: **16/24 cases passed**.
+
+This is a verified 5-case improvement over the fixed baseline on *published tests*, but it does **not** demonstrate generalization or model improvement.
 
 ## Known limitations
 
