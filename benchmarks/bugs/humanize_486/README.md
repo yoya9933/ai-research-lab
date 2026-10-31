@@ -10,3 +10,17 @@
 - **Limitations:** All assertions are public or investigator-written and were visible before the candidate is authored, so this is **not blind**. Potential model pretraining exposure cannot be ruled out. This is a separate arithmetic root cause from issue #30's rounding and #333's overflow, but all three reports concern the *same upstream project*, reducing external diversity. Source code executes in a subprocess; this is not an isolation sandbox for untrusted code.
 
 A passing baseline test demonstrates **reproduction** on the historical source, not a fix or general AI improvement.
+
+## Isolated local candidate (public, unblinded)
+
+`patch.py` copies the pinned source to a temporary directory and changes only
+the ordinal suffix lookup: `abs(value)` determines the digit and 11–13
+exception, while the original signed value is retained for display. The patch
+fails closed if the exact pre-fix source anchor differs.
+
+Run `python -m unittest tests.test_humanize_486_candidate -v`.
+The candidate is compared against the **same 15 observations** as the immutable
+baseline, with 7 wrong negative-suffix outputs corrected and 8 unchanged
+controls (positive values, zero, invalid input, and correctly formatted
+negative teens). These are test assertions, not an independent blind score.
+No upstream changes, external API, package installation or model inference.
