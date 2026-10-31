@@ -51,3 +51,7 @@ python -m lab.report results/baseline.json results/attempt.json
 ```
 
 The comparison displays score change, cases fixed, and cases regressed. It rejects different suites, altered inputs/expected values, and inconsistent reported totals. Scores still reflect **only** the published cases.
+
+## Deterministic property tests
+
+Run `python -m unittest discover -s tests -v` to check 411 additional input combinations for the three fixed functions using math or specification-based oracles. See [experiment 003](experiments/003-properties.md). These are bounded tests, **not** proof of general correctness or independent model improvement.

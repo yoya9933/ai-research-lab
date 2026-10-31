@@ -15,3 +15,7 @@ Can a chat-based model improve defect repair through explicit hypotheses, determ
 ## Limitations
 
 The 10 tasks are small and hand-authored, not representative of real software engineering. The answer key exists in this repository, so blinding relies on process discipline and cannot be enforced. Tests may miss bugs. The grader imports candidate modules and must not execute untrusted code. ChatGPT internal token budgets cannot be controlled or retrieved. Claims about model improvement require independent repeated attempts and separate held-out tasks.
+
+## Deterministic property validation
+
+In addition to example cases, tests can check program properties with bounded, reproducible inputs. Use a mathematically or specification-defined oracle rather than copying the repaired implementation as the expected result. Record the input domain, count, and whether the repair author also authored the properties. Never describe hundreds of test inputs as hundreds of independent AI trials.
