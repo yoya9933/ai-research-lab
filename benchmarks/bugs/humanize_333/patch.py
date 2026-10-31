@@ -21,7 +21,7 @@ NEW = '''        try:
 def make_candidate(destination: Path) -> Path:
     """Copy trusted pinned vendor tree and change one guarded conversion block."""
     destination = Path(destination)
-    shutil.copytree(VENDOR, destination)
+    shutil.copytree(VENDOR, destination, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     target = destination / "humanize" / "time.py"
     original = target.read_text(encoding="utf-8")
     if original.count(OLD) != 1:

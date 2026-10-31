@@ -1,7 +1,7 @@
 """A minimal candidate patch for the *frozen* upstream humanize issue #30."""
 
 from pathlib import Path
-from shutil import copytree
+from shutil import copytree, ignore_patterns
 
 from .reproduce import VENDOR
 
@@ -20,7 +20,7 @@ INSERT = '''    # Round before splitting into hours/minutes so a 60-unit carry i
 
 def make_candidate(destination: Path) -> Path:
     """Produce an isolated candidate; never overwrite the upstream snapshot."""
-    copytree(VENDOR, destination)
+    copytree(VENDOR, destination, ignore=ignore_patterns("__pycache__", "*.pyc"))
     module = destination / "humanize" / "time.py"
     original = module.read_text(encoding="utf-8")
     if original.count(NEEDLE) != 1:

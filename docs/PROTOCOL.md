@@ -23,3 +23,15 @@ In addition to example cases, tests can check program properties with bounded, r
 ## External-source exercise intake
 
 The `benchmarks/exercism` source corpus is MIT-licensed and pinned to a Git SHA. Preserve upstream tests and copyright, and store candidate implementations separately. Comparing the original stubs and candidate shows completion on *public upstream tests*, not genuine real-world bug repair or a blinded ability measurement. Real-world issue reproduction remains an open research goal.
+
+## Temporary candidate source and Python bytecode
+
+Source-attributed bug replays copy a pinned upstream **source** subset into
+a disposable candidate directory. Exclude `__pycache__` directories and
+`*.pyc` files when copying. Python can consider timestamp-based bytecode
+valid if a patch preserves source length and falls within the timestamp
+granularity, causing an apparent candidate to execute old behavior. Use
+standard-library `shutil.ignore_patterns` and assert the temporary copy
+contains no inherited caches **before** import. See
+[experiment 012](../experiments/012-boltons-rotation-cache-failure.md) for
+the observed CI failure; hash-verified upstream files remain unchanged.
