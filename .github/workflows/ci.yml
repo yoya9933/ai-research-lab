@@ -30,3 +30,5 @@ jobs:
           python -m lab evaluate --module lab.buggy --output results/baseline.json
           python -m lab evaluate --module lab.attempt_001 --output results/attempt.json
           python -m lab.report results/baseline.json results/attempt.json
+      - name: Check pinned external starter baseline
+        run: python -m benchmarks.exercism.runner starter --output results/exercism-starter.json

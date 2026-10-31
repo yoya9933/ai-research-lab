@@ -55,3 +55,7 @@ The comparison displays score change, cases fixed, and cases regressed. It rejec
 ## Deterministic property tests
 
 Run `python -m unittest discover -s tests -v` to check 411 additional input combinations for the three fixed functions using math or specification-based oracles. See [experiment 003](experiments/003-properties.md). These are bounded tests, **not** proof of general correctness or independent model improvement.
+
+## Externally authored exercise benchmark (v0.2 groundwork)
+
+The [pinned Exercism Python corpus](benchmarks/exercism/README.md) includes three MIT-licensed practice exercises and **29 original upstream tests**. It runs fully offline using `unittest` and can use the existing `lab.report` comparator. It is **not a set of real-world bug reports** and the model has already seen the public test assertions; see [provenance notes](experiments/004-external-intake.md).

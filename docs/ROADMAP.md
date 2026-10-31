@@ -12,3 +12,6 @@
 - [ ] v1.0: Publish a reproducible, reviewed case study with limitations.
 
 Versions indicate scope, **not** demonstrated improvements in AI capability.
+- [x] v0.2.0 (partial): Pin 3 Exercism tasks and 29 original MIT-licensed tests; verify incomplete baseline.
+- [ ] v0.2.1: Record a chat-authored candidate and externally sourced test scores, disclose exposure.
+- [ ] v0.2.2: Introduce non-Exercism real bug reports with replayable regression tests.
