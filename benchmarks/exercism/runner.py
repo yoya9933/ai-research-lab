@@ -8,7 +8,12 @@ import unittest
 
 ROOT = Path(__file__).resolve().parent
 UPSTREAM_SHA = "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706"
-EXPECTED_TESTS = 29
+TRACKS = {
+    "starter": ("starter", "tests", 29),
+    "attempt_001": ("attempt_001", "tests", 29),
+    "starter_002": ("trial_002/starter", "trial_002/tests", 44),
+    "attempt_002": ("trial_002/attempt_002", "trial_002/tests", 44),
+}
 
 
 class RecordingResult(unittest.TestResult):
@@ -37,19 +42,20 @@ class RecordingResult(unittest.TestResult):
 
 
 def evaluate(candidate):
-    if candidate not in ("starter", "attempt_001"):
+    if candidate not in TRACKS:
         raise ValueError("Only named, reviewed in-repository candidates are supported")
-    directory = ROOT / candidate
+    code_dir, test_dir, expected_tests = TRACKS[candidate]
+    directory = ROOT / code_dir
     if not directory.is_dir():
         raise FileNotFoundError(directory)
     sys.path.insert(0, str(directory))
-    suite = unittest.defaultTestLoader.discover(str(ROOT / "tests"), pattern="*_test.py")
+    suite = unittest.defaultTestLoader.discover(str(ROOT / test_dir), pattern="*_test.py")
     result = RecordingResult()
     suite.run(result)
-    if result.testsRun != EXPECTED_TESTS:
-        raise RuntimeError(f"Expected {EXPECTED_TESTS} upstream tests; got {result.testsRun}")
+    if result.testsRun != expected_tests:
+        raise RuntimeError(f"Expected {expected_tests} upstream tests; got {result.testsRun}")
     return {
-        "suite": f"exercism/python@{UPSTREAM_SHA}",
+        "suite": f"exercism/python@{UPSTREAM_SHA}" + (":trial-002" if candidate.endswith("_002") else ""),
         "passed": sum(item["passed"] for item in result.cases),
         "total": result.testsRun,
         "cases": result.cases,
@@ -58,7 +64,7 @@ def evaluate(candidate):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("candidate", choices=("starter", "attempt_001"))
+    parser.add_argument("candidate", choices=tuple(TRACKS))
     parser.add_argument("--output", type=Path)
     parser.add_argument("--require-all-pass", action="store_true")
     args = parser.parse_args()

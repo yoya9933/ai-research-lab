@@ -17,7 +17,7 @@ The three smoke tests in `tests/test_preregistered_candidate.py` are derived fro
 
 ## Next verification (must happen later)
 
-1. Commit and merge this candidate unchanged.
+1. Commit and merge this candidate unchanged. Completed in [f714ff6](https://github.com/yoya9933/ai-research-lab/commit/f714ff61474145f50036a6a77351baf0e441ff93).
 2. Only then fetch the original upstream `luhn_test.py`, `pangram_test.py`, and `armstrong_numbers_test.py` from the pinned commit.
 3. Run the candidate and the stubs on the imported tests. Preserve all failures and score differences before any repairs.
 4. If errors occur, create a **new attempt** rather than rewriting the frozen candidate.
