@@ -39,6 +39,14 @@ class CompareTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "differs"):
             compare(self.original, changed)
 
+    def test_reject_shorter_report(self):
+        changed = copy.deepcopy(self.candidate)
+        removed = changed["cases"].pop()
+        changed["total"] -= 1
+        changed["passed"] -= int(removed["passed"])
+        with self.assertRaisesRegex(ValueError, "Case count differs"):
+            compare(self.original, changed)
+
     def test_reject_inconsistent_score(self):
         self.candidate["passed"] = 999
         with self.assertRaisesRegex(ValueError, "Invalid"):

@@ -22,6 +22,8 @@ def compare(baseline, candidate):
     suite = baseline.get("suite")
     if not isinstance(suite, str) or not suite or suite != candidate.get("suite"):
         raise ValueError("Cannot compare different or unidentified suites")
+    if baseline["total"] != candidate["total"]:
+        raise ValueError("Case count differs")
     for before, after in zip(baseline["cases"], candidate["cases"]):
         if any(before.get(key) != after.get(key) for key in ("task", "args", "expected")):
             raise ValueError("Case order, input or expected answer differs")
