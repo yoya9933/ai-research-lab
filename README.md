@@ -41,3 +41,13 @@ Read the [experiment protocol](docs/PROTOCOL.md), [roadmap](docs/ROADMAP.md), an
 ## Post-commit follow-up
 
 Use `--suite followup` to grade 20 additional cases introduced after the first candidate was committed. Read [experiment 002](experiments/002-followup.md) for precise provenance and why the results are **not** independently blinded.
+
+## Compare attempts without hiding regressions
+
+```bash
+python -m lab evaluate --module lab.buggy --output results/baseline.json
+python -m lab evaluate --module lab.attempt_001 --output results/attempt.json
+python -m lab.report results/baseline.json results/attempt.json
+```
+
+The comparison displays score change, cases fixed, and cases regressed. It rejects different suites, altered inputs/expected values, and inconsistent reported totals. Scores still reflect **only** the published cases.

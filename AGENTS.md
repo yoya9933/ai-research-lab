@@ -9,3 +9,4 @@ Apply the [Ponytail](https://github.com/DietrichGebert/ponytail) principle: unde
 - Every functional change needs a reproducible test. Run `python -m unittest discover -s tests -v`.
 - `--module` runs trusted Python code: do not imply the evaluator safely handles untrusted submissions.
 - Record what was not checked and any remaining risks in PR descriptions.
+- Compare only the exact same case suite and inputs. Track regressions alongside improvements; no cherry-picking results.

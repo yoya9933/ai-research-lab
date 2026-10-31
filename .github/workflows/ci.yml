@@ -25,3 +25,8 @@ jobs:
           python -m lab evaluate --module lab.buggy --suite followup
           python -m lab evaluate --module lab.attempt_001 --suite followup
           python -m lab evaluate --module lab.solutions --suite followup --require-all-pass
+      - name: Compare candidate and baseline
+        run: |
+          python -m lab evaluate --module lab.buggy --output results/baseline.json
+          python -m lab evaluate --module lab.attempt_001 --output results/attempt.json
+          python -m lab.report results/baseline.json results/attempt.json
