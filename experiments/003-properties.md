@@ -21,7 +21,7 @@ The same inputs are also fed to the original buggy implementations, which must f
 ## Reproduction
 
 ```bash
-python -m unittest tests.test_properties -v
+python -m unittest discover -s tests -p test_properties.py -v
 python -m unittest discover -s tests -v
 ```
 
