@@ -4,7 +4,7 @@ Date: 2026-11-01
 Report: https://github.com/python-humanize/humanize/issues/30
 Frozen baseline on main: `58df7c5dcb480791fab4f7d76fa398e278470ebb`
 Upstream source: `9528daf55fd7178c025f7294b8e349f8b3524175`
-Status: candidate submitted for CI verification
+Status: candidate verified by GitHub Actions; limited historical repair
 
 ## Hypothesis
 
@@ -28,6 +28,10 @@ python -m benchmarks.bugs.humanize_30.reproduce
 python -m benchmarks.bugs.humanize_30.reproduce --candidate
 python -m unittest discover -s tests -v
 ```
+
+## Verified CI evidence
+
+[GitHub Actions run #41224449119](https://github.com/yoya9933/ai-research-lab/actions/runs/41224449119) passed **41 unit tests**. The upstream baseline still prints `8 hours and 60 minutes` and `1 day and 1 hours`. The chat-authored candidate prints **`9 hours`** and **`1 day and 1 hour`** instead. Both control examples preserve their baseline output exactly. The original imported source files remain byte-for-byte unchanged.
 
 ## Limitations
 
