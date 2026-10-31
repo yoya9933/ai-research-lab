@@ -43,3 +43,5 @@ jobs:
           python -m lab.report results/starter_002.json results/attempt_002.json
       - name: Reproduce pinned upstream humanize issue 30
         run: python -m benchmarks.bugs.humanize_30.reproduce
+      - name: Verify historical issue candidate patch
+        run: python -m benchmarks.bugs.humanize_30.reproduce --candidate

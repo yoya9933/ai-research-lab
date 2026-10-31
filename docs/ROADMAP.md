@@ -18,4 +18,4 @@ Versions indicate scope, **not** demonstrated improvements in AI capability.
 - [x] v0.2.3: Import original upstream tests after candidate freeze; preserve actual scores.
 - [ ] v0.3: Investigate source-attributed real-world defects and independent regression evidence.
 - [x] v0.3.0: Reproduce a real upstream issue (#30 in humanize) using a pinned pre-fix source snapshot and external reporter's test case.
-- [ ] v0.3.1: Commit a minimal candidate fix separate from baseline and run correctness/regression tests.
+- [x] v0.3.1: Commit a minimal candidate fix separate from baseline and run correctness/regression tests.
