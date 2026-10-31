@@ -24,7 +24,7 @@ The starter modules are intentionally incomplete upstream, not examples of genui
 python -m benchmarks.exercism.runner starter --output results/exercism-starter.json
 ```
 
-After a candidate has been recorded:
+The first chat-authored candidate was committed in a **separate version** after the starter corpus:
 
 ```bash
 python -m benchmarks.exercism.runner attempt_001 --output results/exercism-attempt.json --require-all-pass

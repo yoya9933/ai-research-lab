@@ -59,3 +59,15 @@ Run `python -m unittest discover -s tests -v` to check 411 additional input comb
 ## Externally authored exercise benchmark (v0.2 groundwork)
 
 The [pinned Exercism Python corpus](benchmarks/exercism/README.md) includes three MIT-licensed practice exercises and **29 original upstream tests**. It runs fully offline using `unittest` and can use the existing `lab.report` comparator. It is **not a set of real-world bug reports** and the model has already seen the public test assertions; see [provenance notes](experiments/004-external-intake.md).
+
+### Chat-authored external attempt
+
+The first external exercise completion is in `benchmarks/exercism/attempt_001/`. Reproduce 29 pinned, public upstream tests and compare to the incomplete upstream starter:
+
+```bash
+python -m benchmarks.exercism.runner starter --output results/exercism-starter.json
+python -m benchmarks.exercism.runner attempt_001 --output results/exercism-attempt.json --require-all-pass
+python -m lab.report results/exercism-starter.json results/exercism-attempt.json
+```
+
+See [experiment 005](experiments/005-external-chat-attempt.md). This is explicitly **unblinded** educational exercise completion, not independent evidence of AI capability growth.
