@@ -51,3 +51,5 @@ jobs:
         run: python -m unittest tests.test_humanize_333_candidate -v
       - name: Reproduce independently reported humanize negative ordinal defect
         run: python -m benchmarks.bugs.humanize_486.reproduce
+      - name: Verify isolated humanize negative-ordinal candidate and controls
+        run: python -m unittest tests.test_humanize_486_candidate -v
