@@ -41,3 +41,5 @@ jobs:
           python -m benchmarks.exercism.runner starter_002 --output results/starter_002.json
           python -m benchmarks.exercism.runner attempt_002 --output results/attempt_002.json
           python -m lab.report results/starter_002.json results/attempt_002.json
+      - name: Reproduce pinned upstream humanize issue 30
+        run: python -m benchmarks.bugs.humanize_30.reproduce
