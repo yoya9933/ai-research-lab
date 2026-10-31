@@ -14,4 +14,6 @@
 Versions indicate scope, **not** demonstrated improvements in AI capability.
 - [x] v0.2.0 (partial): Pin 3 Exercism tasks and 29 original MIT-licensed tests; verify incomplete baseline.
 - [x] v0.2.1: Record a chat-authored candidate and externally sourced test scores, disclose exposure.
-- [ ] v0.2.2: Introduce non-Exercism real bug reports with replayable regression tests.
+- [x] v0.2.2: Commit a second exercise candidate before viewing upstream test files.
+- [ ] v0.2.3: Import original upstream tests after candidate freeze; preserve actual scores.
+- [ ] v0.3: Investigate source-attributed real-world defects and independent regression evidence.
