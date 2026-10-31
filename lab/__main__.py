@@ -1,6 +1,7 @@
-"""Run deterministic cases against a trusted Python module."""
+"""Evaluate deterministic cases against a trusted Python module."""
 
 import argparse
+from copy import deepcopy
 import importlib
 import json
 from pathlib import Path
@@ -16,7 +17,7 @@ def evaluate(module):
             raise ValueError(f"Missing callable: {name}")
         for args, expected in cases:
             try:
-                actual = function(*args)
+                actual = function(*deepcopy(args))
                 passed = type(actual) is type(expected) and actual == expected
                 error = None
             except Exception as exc:
@@ -32,6 +33,8 @@ def main():
     parser.add_argument("command", choices=["evaluate"])
     parser.add_argument("--module", required=True, help="Trusted importable Python module")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--require-all-pass", action="store_true",
+                        help="Exit with error code 1 when any case fails")
     args = parser.parse_args()
     report = evaluate(importlib.import_module(args.module))
     print(f"{report['passed']}/{report['total']} cases passed")
@@ -41,6 +44,8 @@ def main():
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str) + "\n",
                                encoding="utf-8")
+    if args.require_all_pass and report["passed"] != report["total"]:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
