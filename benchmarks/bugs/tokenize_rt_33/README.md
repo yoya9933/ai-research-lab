@@ -36,3 +36,22 @@ unittest discovery. The extra cases include trailing spaces, multibyte
 Unicode, multiline input, LF, CRLF and an empty input. Report roundtrip
 limitations rather than hiding them. This is a post-commit *conversation
 exposure* check, **not** independent or blinded evaluation.
+
+## Residual roundtrip failure and separate secondary candidate
+
+The post-freeze [CI #41253159050](https://github.com/yoya9933/ai-research-lab/actions/runs/41253159050)
+demonstrated that, even after the ordinal `NEWLINE`-offset candidate,
+both the **original source and the first candidate** lose trailing spaces
+on source with no terminal EOL. The failure was exposed, not counted as
+a repaired property. This is an **investigator-discovered** gap, not a
+new independent external report.
+
+`patch_roundtrip.py` constructs a fresh temporary **first** candidate
+and then applies an additional one-occurrence patch for missing whitespace
+text on the artificial no-EOL token: use the original source line when
+the tokenizer supplies an empty `line`. The prior candidate file is
+not altered. Run `python -m benchmarks.bugs.tokenize_rt_33.roundtrip`
+to see all seven identical post-freeze inputs across the first and
+secondary candidates, including the complete failure lists. The
+tests require two previously failing roundtrips to pass and all seven
+existing byte offsets to remain unchanged. This is not a blind score.

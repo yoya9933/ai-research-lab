@@ -55,3 +55,5 @@ jobs:
         run: python -m unittest tests.test_humanize_486_candidate -v
       - name: Record post-freeze tokenize-rt edge observations
         run: python -m benchmarks.bugs.tokenize_rt_33.followup
+      - name: Record secondary tokenize-rt roundtrip candidate
+        run: python -m benchmarks.bugs.tokenize_rt_33.roundtrip
