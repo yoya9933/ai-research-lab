@@ -3,7 +3,7 @@
 Date: 2026-11-01
 Frozen candidate commit on main: [f714ff6](https://github.com/yoya9933/ai-research-lab/commit/f714ff61474145f50036a6a77351baf0e441ff93)
 Source commit: [Exercism Python 6105f6d9d3ef66ce3d5c8f529d2882af3d76b706](https://github.com/exercism/python/commit/6105f6d9d3ef66ce3d5c8f529d2882af3d76b706)
-Status: pending CI verification
+Status: CI verified; candidate remained unchanged
 
 ## Protocol
 
@@ -16,6 +16,12 @@ python -m lab.report results/starter_002.json results/attempt_002.json
 ```
 
 Any failures must be recorded. Do not alter `trial_002/attempt_002/` to improve the frozen score; use `attempt_003/` for later repairs.
+
+## Verified outcomes
+
+[GitHub Actions run #41222595587](https://github.com/yoya9933/ai-research-lab/actions/runs/41222595587) ran **31 unit tests** successfully, then evaluated the second trial: `starter_002: 0/44` and frozen `attempt_002: 44/44`. The comparator reported **44 fixes and 0 regressions** on these tests. There were no changes to `attempt_002` after its earlier merge.
+
+This measures performance on this published suite, not future or unseen software defects.
 
 ## Limitations
 
