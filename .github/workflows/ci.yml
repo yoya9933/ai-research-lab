@@ -49,3 +49,5 @@ jobs:
         run: python -m benchmarks.bugs.humanize_333.reproduce
       - name: Verify isolated issue 333 candidate and finite overflow guard
         run: python -m unittest tests.test_humanize_333_candidate -v
+      - name: Reproduce independently reported humanize negative ordinal defect
+        run: python -m benchmarks.bugs.humanize_486.reproduce
