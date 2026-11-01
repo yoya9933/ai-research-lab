@@ -16,6 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 # 9e539f746a023e64fa252677895e8bc7791eddc5.
 # Secondary tokenizer candidate after that follow-up, at:
 # d189e4826609fa9d063b42155170167880036ca3.
+# more-itertools #1342 candidate committed before this property matrix:
+# 33cd99acfdf62b13033db865f4b0302a6a7ebd96.
 FROZEN_BLOBS = {
     "benchmarks/exercism/trial_002/attempt_002/armstrong_numbers.py":
         "53f48efbe999d4891a2537c9f44b6f62f5c6a6bb",
@@ -27,6 +29,8 @@ FROZEN_BLOBS = {
         "778fa86aebcf6c525eec2f711b04c1ec0f671a2a",
     "benchmarks/bugs/tokenize_rt_33/patch_roundtrip.py":
         "e85619f2dbc03545cfdb7d3c8cb98181e8df2398",
+    "benchmarks/bugs/more_itertools_1342/patch.py":
+        "b26e35b35a8911e8a117e3f7f10a703291b4b585",
 }
 
 
