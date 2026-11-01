@@ -174,6 +174,14 @@ patch files that lack a declared pin. The hashes verify the checked-out
 **current wrapper bytes**; historical candidate-commit SHAs establish
 earlier freeze points.
 
+The [upstream inventory test](../tests/test_upstream_source_inventory.py)
+also requires exact recursive `.py` file sets for the five copied
+third-party baseline subsets (humanize, boltons, tokenize-rt,
+more-itertools and Pygments). Extra nested Python modules fail CI
+instead of silently enlarging the executable source scope. Existing
+case-specific tests separately verify the original source **bytes**
+and license hashes; this manifest is not a replacement for them.
+
 Four older candidate wrappers (humanize #30, #333, #486 and boltons #480)
 were legitimately edited in [PR #25](https://github.com/yoya9933/ai-research-lab/pull/25)
 *after* their original repair PRs, solely to exclude inherited Python
