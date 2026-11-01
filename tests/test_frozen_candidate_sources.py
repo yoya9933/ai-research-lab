@@ -35,10 +35,36 @@ FROZEN_BLOBS = {
         "b26e35b35a8911e8a117e3f7f10a703291b4b585",
     "benchmarks/bugs/pygments_3190/patch.py":
         "59d075d0763feb68fb2385b71f95cf2835c68afe",
+    # Current reproducible wrappers, not all byte-identical to original
+    # candidate commits: PR #25 excluded stale inherited bytecode.
+    "benchmarks/bugs/humanize_30/patch.py":
+        "d270f28f8017043b3bbf4570112038bed384f8cf",
+    "benchmarks/bugs/humanize_333/patch.py":
+        "87a9737feb8a5e6d1b97b2d622f11789fcd57e94",
+    "benchmarks/bugs/humanize_486/patch.py":
+        "e7d35226208aa3401f684ed2c1c49768356ad74d",
+    "benchmarks/bugs/boltons_480/patch.py":
+        "b172171c58b4245d8a0e9e2e10a4c0f41a170552",
+    # The following wrappers also match their original candidate-PR blobs.
+    "benchmarks/bugs/boltons_479/patch.py":
+        "2026d99085619211b75366a820cf9614afed9fe5",
+    "benchmarks/bugs/boltons_480/patch_roundtrip.py":
+        "56c6aa5f0f3f71c4744e15150de58b9c45971908",
 }
 
 
 class FrozenCandidateSourceTests(unittest.TestCase):
+    def test_every_local_candidate_patch_is_listed(self):
+        discovered = {
+            str(path.relative_to(ROOT))
+            for path in (ROOT / "benchmarks" / "bugs").glob("*/patch*.py")
+        }
+        pinned = {
+            path for path in FROZEN_BLOBS
+            if path.startswith("benchmarks/bugs/")
+        }
+        self.assertEqual(discovered, pinned)
+
     def test_historical_candidates_remain_byte_for_byte_frozen(self):
         for relative_path, expected in FROZEN_BLOBS.items():
             with self.subTest(path=relative_path):

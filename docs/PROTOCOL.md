@@ -64,14 +64,26 @@ safe to serialize or authenticate JSON reports.
 
 ## Frozen candidate source integrity
 
-`tests/test_frozen_candidate_sources.py` checks Git blob hashes of the
-three Exercism trial-002 candidate files at their pre-test commit, the
-first `tokenize-rt` patch at its pre-follow-up commit, and the distinct
-later roundtrip patch. These offline checks catch accidental changes to
-candidate source bytes after their recorded freeze points. The historical
-Git commits establish chronology; hashing alone does **not** prove the
-model had no prior exposure, authenticate the oracle, or prevent a reviewer
-from intentionally changing both code and checksum in a future PR.
+`tests/test_frozen_candidate_sources.py` checks Git blob hashes of all
+three frozen Exercism trial-002 candidate source files **and every present
+`benchmarks/bugs/*/patch*.py` candidate wrapper**, rejecting newly added
+patch files that lack a declared pin. The hashes verify the checked-out
+**current wrapper bytes**; historical candidate-commit SHAs establish
+earlier freeze points.
+
+Four older candidate wrappers (humanize #30, #333, #486 and boltons #480)
+were legitimately edited in [PR #25](https://github.com/yoya9933/ai-research-lab/pull/25)
+*after* their original repair PRs, solely to exclude inherited Python
+bytecode caches when copying pinned source trees. The actual replacement
+code, expected outputs, and source snapshots were not changed by that PR.
+The [source-integrity audit](../experiments/026-candidate-source-integrity.md)
+records **both initial and current** blob identities and review provenance
+rather than falsely claiming those four wrappers remained byte-identical
+since first submission.
+
+These tests detect later byte changes and missing pin registration,
+but not malicious simultaneous edits to code and pins, pretraining
+contamination, grading-oracle problems, or untrusted-code execution.
 
 ## Manual independent-assessor protocol (not yet performed)
 
