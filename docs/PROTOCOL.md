@@ -160,3 +160,14 @@ public solution had been seen before candidate creation. No experiment
 here has yet satisfied all independent-assessor gates above; Issue #7
 must remain open. This procedure alone is **not evidence of model
 improvement**.
+
+## GitHub Actions event coverage
+
+The same standard-library regression suite runs on **pull requests targeting
+`main`** and on **pushes to `main` after merge**. Arbitrary branch
+pushes without an open PR are **not** evidence of a passing check.
+This avoids running the full CI matrix twice for every pushed PR commit,
+while preserving the pre-merge PR check and independent post-merge
+confirmation. Always verify the actual PR **head SHA** and successful
+GitHub Actions conclusion before merging; do not infer success from
+a different branch's earlier run.
