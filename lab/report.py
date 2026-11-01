@@ -1,6 +1,7 @@
 """Compare two trusted evaluator JSON reports from the *same* test suite."""
 
 import argparse
+from hashlib import sha256
 import json
 from pathlib import Path
 
@@ -126,8 +127,10 @@ def main():
     parser.add_argument("--fail-on-regression", action="store_true",
                         help="Exit 1 if any previously passing case regresses")
     args = parser.parse_args()
-    baseline = json.loads(args.baseline.read_text(encoding="utf-8"))
-    candidate = json.loads(args.candidate.read_text(encoding="utf-8"))
+    baseline_bytes = args.baseline.read_bytes()
+    candidate_bytes = args.candidate.read_bytes()
+    baseline = json.loads(baseline_bytes.decode("utf-8"))
+    candidate = json.loads(candidate_bytes.decode("utf-8"))
     result = compare(baseline, candidate)
     if args.output and any(
         args.output.resolve() == path.resolve()
@@ -136,6 +139,10 @@ def main():
     ):
         parser.error("--output must not overwrite an input report")
     if args.output:
+        result["input_sha256"] = {
+            "baseline": sha256(baseline_bytes).hexdigest(),
+            "candidate": sha256(candidate_bytes).hexdigest(),
+        }
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(
             json.dumps(result, ensure_ascii=False, indent=2) + "\n",

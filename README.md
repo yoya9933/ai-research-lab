@@ -67,7 +67,11 @@ requested output. The CLI also refuses an `--output` path that would
 overwrite either input report (including symlink or hard-link aliases). Use `--fail-on-regression` when a downstream CI job must reject a
 candidate that breaks any previously passing case; it exits with status
 1 **after** printing counts and writing any requested JSON evidence.
-Without the flag, the comparison remains informational. The tool
+Without the flag, the comparison remains informational. Every
+saved comparison includes SHA-256 digests of **both exact original input
+files** (`input_sha256`), including when a regression gate exits nonzero;
+this allows the inputs used for an audit to be matched byte-for-byte.
+These hashes alone do not authenticate who authored the inputs. The tool
 supports the existing lab/Exercism evaluator report format; third-party
 bug reproducers do not automatically emit that schema. Scores still
 reflect **only** the compared cases.
