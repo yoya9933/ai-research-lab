@@ -1,5 +1,21 @@
 # Roadmap
 
+## Outcome-first priorities (reordered 2026-11-02)
+
+Our north star is [verified improvement on new tasks](RESEARCH_GOAL.md), **not more bug-fix commits**.
+
+- [x] **G0 — reproducible engineering substrate:** GitHub MCP code changes, pinned source, CI regression checks and honest failure records.
+- [x] **G1a — reusable research memory documented:** [evidence-linked strategy memory](STRATEGY_MEMORY.md) with stable content to freeze before a study.
+- [ ] **G1b — freeze strategy revision:** pin memory file's exact Git blob and register the experimental prompt/tool budgets before collecting outcomes.
+- [ ] **G2 — independent six-task pilot:** an external assessor withholds grading assertions until both Chat-only first-attempt candidates are frozen. Do not count this as a statistical demonstration.
+- [ ] **G3 — preregistered paired comparison:** evaluate 20 independent defect families against the same assessor-held scoring rules; preserve failures and compare A/B paired outcomes.
+- [ ] **G4 — domain transfer:** test whether any observed benefit transfers beyond Python debugging (for example data interpretation).
+- [ ] **G5 — publish v1.0:** report complete protocol, results (including null findings), contamination limits and reproducible evidence.
+
+**Current critical dependency:** an independent assessor controlling withheld tests. Do not claim a completed blind study until that exists.
+
+## Previous implementation milestones
+
 - [x] v0.1.0: Small reproducible debugging benchmark; Python-only grader; tests and CI.
 - [x] v0.1.1: Isolate mutable inputs, add strict evaluator exit status, and regression tests.
 - [x] v0.1.2: Record a partial, explicitly unblinded chat-authored repair with CI-verifiable counts.

@@ -12,3 +12,7 @@ Apply the [Ponytail](https://github.com/DietrichGebert/ponytail) principle: unde
 - Compare only the exact same case suite and inputs. Track regressions alongside improvements; no cherry-picking results.
 - Keep copied third-party tests and license notices intact. Pin upstream commit hashes and do not claim public tests are blind.
 - For real-world issue replays, preserve pristine upstream source snapshots and copyright, place local fixes in separate candidate artifacts, and verify the unmodified baseline before claiming a repair.
+
+- Prefer work that advances the [research success gates](docs/RESEARCH_GOAL.md) over increasing commit, case or test counts.
+- Freeze [strategy memory](docs/STRATEGY_MEMORY.md) before controlled comparisons; do not expose independently withheld answers to repair sessions.
+- Clearly separate an external-memory workflow improvement from a change to model weights or internal reasoning tokens.
