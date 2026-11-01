@@ -112,7 +112,11 @@ both observed values/errors for every fix and regression, plus
 produce a different wrong value/exception. Such unresolved changes are
 not counted as fixes or pass-to-fail regressions and are not omitted
 from the saved evidence. Output is written
-only after the existing same-suite validation succeeds. It cannot overwrite
+only after the existing same-suite validation succeeds. When saved,
+the comparison JSON includes SHA-256 hashes of the exact baseline and
+candidate input *file bytes*, read once for scoring and hashing. These
+bind a report to input artifacts but are neither signed provenance nor
+proof that the upstream source or scorer was independently controlled. It cannot overwrite
 either original input report, even via a filesystem link: both original JSON
 inputs remain available for independent comparison and later audit. When
 `--fail-on-regression` is also given, **any** regressed case makes

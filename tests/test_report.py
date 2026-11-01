@@ -120,6 +120,11 @@ class CompareTests(unittest.TestCase):
             self.assertEqual(run.returncode, 0, run.stderr)
             self.assertIn("fixed=5, regressed=0", run.stdout)
             summary = json.loads(output.read_text(encoding="utf-8"))
+            from hashlib import sha256
+            self.assertEqual(summary.pop("input_sha256"), {
+                "baseline": sha256(baseline.read_bytes()).hexdigest(),
+                "candidate": sha256(candidate.read_bytes()).hexdigest(),
+            })
             self.assertEqual(summary, compare(
                 json.loads(baseline.read_text(encoding="utf-8")),
                 json.loads(candidate.read_text(encoding="utf-8")),
@@ -167,6 +172,11 @@ class CompareTests(unittest.TestCase):
             self.assertEqual(gate.returncode, 1, gate.stderr)
             self.assertIn("fixed=5, regressed=1", gate.stdout)
             audit = json.loads(output.read_text(encoding="utf-8"))
+            from hashlib import sha256
+            self.assertEqual(audit["input_sha256"], {
+                "baseline": sha256(before.read_bytes()).hexdigest(),
+                "candidate": sha256(after.read_bytes()).hexdigest(),
+            })
             self.assertEqual(audit["regressed"], 1)
             self.assertEqual(audit["fixed"], 5)
             self.assertEqual(
