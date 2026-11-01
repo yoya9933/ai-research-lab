@@ -45,6 +45,13 @@ native `TestLoader.errors` and **rejects the whole evaluation before
 executing a partial test suite**, preserving the discovery traceback.
 This guards test infrastructure errors, not model correctness.
 
+Unittest's native `load_tests` hook can also return **two instances of
+the same test identifier**, so `testsRun` can match the expected count
+without identifying the intended distinct cases. The runner now rejects
+missing or duplicated test IDs. This prevents duplicate-case inflation
+of the external score; it does not prove that a unique test ID corresponds
+to an independent defect or a hidden test.
+
 The unittest runner records a **single parent test** even if the parent
 executes multiple `self.subTest()` contexts. Failed subtests are now
 attached to that parent's error text (including every failing context),

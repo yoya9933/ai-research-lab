@@ -178,6 +178,35 @@ class TrackIsolationTests(unittest.TestCase):
                 self.assertIn("broken_suite_test", str(caught.exception))
                 self.assertEqual(sys.path, original_path)
 
+    def test_duplicate_test_ids_do_not_inflate_the_score(self):
+        source = (
+            "import unittest\n\n"
+            "class SyntheticTest(unittest.TestCase):\n"
+            "    def test_case(self):\n"
+            "        self.assertTrue(True)\n\n"
+            "def load_tests(loader, tests, pattern):\n"
+            "    return unittest.TestSuite([\n"
+            "        SyntheticTest('test_case'), SyntheticTest('test_case')\n"
+            "    ])\n"
+        )
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "candidate").mkdir()
+            tests = root / "tests"
+            tests.mkdir()
+            (tests / "synthetic_test.py").write_text(source, encoding="utf-8")
+            original_path = sys.path[:]
+            # Native unittest permits load_tests to return the same test ID
+            # twice, so testsRun can equal the declared count misleadingly.
+            with mock.patch.object(runner, "ROOT", root), mock.patch.object(
+                runner, "TRACKS", {"synthetic": ("candidate", "tests", 2)}
+            ):
+                with self.assertRaisesRegex(
+                    RuntimeError, "Missing or duplicate upstream test identities"
+                ):
+                    runner.evaluate("synthetic")
+            self.assertEqual(sys.path, original_path)
+
     def test_repeated_and_reversed_track_order(self):
         original_path = sys.path[:]
         tracks = (
