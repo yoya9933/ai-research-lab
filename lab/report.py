@@ -38,6 +38,10 @@ def compare(baseline, candidate):
     for report in (baseline, candidate):
         if not isinstance(report, dict):
             raise ValueError("Invalid evaluator report or inconsistent score")
+        try:
+            json.dumps(report, allow_nan=False)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Non-finite or non-JSON evaluator report") from exc
         cases = report.get("cases")
         if (
             not isinstance(cases, list)

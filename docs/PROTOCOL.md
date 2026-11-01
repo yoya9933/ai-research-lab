@@ -120,6 +120,10 @@ reports in the lab/Exercism schema, **not** the heterogeneous third-party
 source-replay JSON dictionaries. This catches
 internally inconsistent JSON records, **not** falsified matching values,
 unauthenticated reports, contamination, or a misleading test oracle.
+It also rejects Python's nonstandard JSON `NaN`, `Infinity` and
+`-Infinity` constants before scoring or writing evidence, even though
+Python's default `json.loads` silently accepts them. This is a strict
+non-finite-value check, not a general-purpose JSON schema validator.
 
 The evaluator records non-JSON-stable return values (for example a tuple
 instead of a required list) as failed outcomes with a type diagnostic and
