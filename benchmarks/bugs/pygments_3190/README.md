@@ -8,3 +8,18 @@
 - **Interpretation and limits:** This is a **fifth** external codebase, but these seven inputs are investigator-written after the upstream PR's public diagnosis and its suggested `sorted(set(strings))` correction were already seen. **Not blind**, not a measured AI improvement, and not full upstream CI or a regex-linter run. An accepted upstream PR supports the report's provenance; this file is merely an immutable *pre-fix* reproduction. Python GitHub Actions results must be checked before claiming measured success.
 
 A green baseline test here confirms the **wrong original output**, not a local repair.
+
+## Separate candidate (unblinded)
+
+`patch.py` copies the exact pre-fix module into a disposable directory
+without inherited bytecode and replaces `sorted(strings)` with
+`sorted(set(strings))` only if the pinned source anchor occurs once.
+`tests/test_pygments_3190_candidate.py` runs **the same seven inputs**
+as the frozen baseline: three duplicate-generated patterns should become
+identical to their deduplicated counterparts while **four controls**
+remain unchanged, with literal-word matching preserved.
+
+Run `python -m unittest tests.test_pygments_3190_candidate -v`.
+The public upstream fix was already known before writing this patch,
+so these observations are **not blind**; they check a narrow,
+single-module property and do not establish a performance improvement.
