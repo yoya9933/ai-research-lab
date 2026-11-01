@@ -138,8 +138,10 @@ internally inconsistent JSON records, **not** falsified matching values,
 unauthenticated reports, contamination, or a misleading test oracle.
 It also rejects Python's nonstandard JSON `NaN`, `Infinity` and
 `-Infinity` constants before scoring or writing evidence, even though
-Python's default `json.loads` silently accepts them. This is a strict
-non-finite-value check, not a general-purpose JSON schema validator.
+Python's default `json.loads` silently accepts them. The CLI also
+rejects repeated JSON object keys at any depth, avoiding ambiguous
+first-value/last-value interpretations. These checks do not authenticate
+source authorship or replace a full JSON schema validator.
 
 The evaluator records non-JSON-stable return values (for example a tuple
 instead of a required list) as failed outcomes with a type diagnostic and
