@@ -24,6 +24,12 @@ In addition to example cases, tests can check program properties with bounded, r
 
 The `benchmarks/exercism` source corpus is MIT-licensed and pinned to a Git SHA. Preserve upstream tests and copyright, and store candidate implementations separately. Comparing the original stubs and candidate shows completion on *public upstream tests*, not genuine real-world bug repair or a blinded ability measurement. Real-world issue reproduction remains an open research goal.
 
+The Exercism runner supports sequential grading within one trusted Python
+process. It temporarily removes potentially cached candidate/test imports,
+then restores the prior `sys.path` and module entries after each track,
+including on failures. This prevents a later named candidate from receiving
+results from an earlier track's cached modules; it is **not** a security sandbox.
+
 ## Temporary candidate source and Python bytecode
 
 Source-attributed bug replays copy a pinned upstream **source** subset into
