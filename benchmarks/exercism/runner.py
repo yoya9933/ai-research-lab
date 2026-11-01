@@ -62,6 +62,13 @@ def evaluate(candidate):
         suite.run(result)
         if result.testsRun != expected_tests:
             raise RuntimeError(f"Expected {expected_tests} upstream tests; got {result.testsRun}")
+        if result.skipped or result.expectedFailures or result.unexpectedSuccesses:
+            raise RuntimeError(
+                "Unscorable upstream test outcomes: "
+                f"skipped={len(result.skipped)}, "
+                f"expected_failures={len(result.expectedFailures)}, "
+                f"unexpected_successes={len(result.unexpectedSuccesses)}"
+            )
         return {
             "suite": f"exercism/python@{UPSTREAM_SHA}" + (":trial-002" if candidate.endswith("_002") else ""),
             "passed": sum(item["passed"] for item in result.cases),

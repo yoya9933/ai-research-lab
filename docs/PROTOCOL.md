@@ -30,6 +30,14 @@ then restores the prior `sys.path` and module entries after each track,
 including on failures. This prevents a later named candidate from receiving
 results from an earlier track's cached modules; it is **not** a security sandbox.
 
+Skipped, expected-failure and unexpected-success unittest outcomes are **not
+valid scored observations** in this external benchmark. The runner refuses
+the entire score with a clear `RuntimeError` if any such test is present,
+rather than silently misrepresenting a skipped test as an ordinary failed
+exercise. Existing pinned upstream suites contain no such annotations.
+This fails closed on unsupported test semantics; it does not certify
+unseen assertions or prevent contamination.
+
 ## Temporary candidate source and Python bytecode
 
 Source-attributed bug replays copy a pinned upstream **source** subset into
