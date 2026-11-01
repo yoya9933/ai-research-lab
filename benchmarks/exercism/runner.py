@@ -84,6 +84,9 @@ def evaluate(candidate):
         suite.run(result)
         if result.testsRun != expected_tests:
             raise RuntimeError(f"Expected {expected_tests} upstream tests; got {result.testsRun}")
+        identities = [case["task"] for case in result.cases]
+        if len(identities) != result.testsRun or len(set(identities)) != result.testsRun:
+            raise RuntimeError("Missing or duplicate upstream test identities")
         if result.skipped or result.expectedFailures or result.unexpectedSuccesses:
             raise RuntimeError(
                 "Unscorable upstream test outcomes: "
