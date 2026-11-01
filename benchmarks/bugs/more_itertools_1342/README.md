@@ -29,3 +29,12 @@ validation error before touching the source.
 These tests are investigator-authored with the upstream solution already
 public. This is **not blind**, not a model performance trial, and not a
 complete upstream-package regression run.
+
+## Post-candidate property check
+
+After the local candidate was frozen in PR #44, a separate
+[372-input property matrix](../../../experiments/020-more-itertools-postfreeze-properties.md)
+was authored: 248 ordinary-size regression controls, 31 zero-size and
+93 negative-size boundary cases. Run
+`python -m unittest tests.test_more_itertools_1342_followup -v`.
+The frozen patch source is hash-checked. This is **post-freeze, not blind**.
