@@ -45,6 +45,16 @@ native `TestLoader.errors` and **rejects the whole evaluation before
 executing a partial test suite**, preserving the discovery traceback.
 This guards test infrastructure errors, not model correctness.
 
+Unittest suite-level fixture exceptions such as `setUpClass`,
+`tearDownClass` and `tearDownModule` are also **unscored**. They may
+occur without a corresponding `startTest` while the ordinary test count
+still matches the expected number. The runner now rejects these
+results with their original traceback instead of attaching the error
+to the last scored case. Ordinary errors raised *inside* a named test
+or an `addSubTest` callback still count as failed candidate
+observations. The runner records subtest error IDs directly from
+the stdlib callback; it does not infer them from traceback formatting.
+
 Unittest's native `load_tests` hook can also return **two instances of
 the same test identifier**, so `testsRun` can match the expected count
 without identifying the intended distinct cases. The runner now rejects
