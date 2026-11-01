@@ -48,18 +48,31 @@ def evaluate(candidate):
     directory = ROOT / code_dir
     if not directory.is_dir():
         raise FileNotFoundError(directory)
-    sys.path.insert(0, str(directory))
-    suite = unittest.defaultTestLoader.discover(str(ROOT / test_dir), pattern="*_test.py")
-    result = RecordingResult()
-    suite.run(result)
-    if result.testsRun != expected_tests:
-        raise RuntimeError(f"Expected {expected_tests} upstream tests; got {result.testsRun}")
-    return {
-        "suite": f"exercism/python@{UPSTREAM_SHA}" + (":trial-002" if candidate.endswith("_002") else ""),
-        "passed": sum(item["passed"] for item in result.cases),
-        "total": result.testsRun,
-        "cases": result.cases,
+    test_directory = ROOT / test_dir
+    module_names = {path.stem for path in directory.glob("*.py")}
+    module_names.update(path.stem for path in test_directory.glob("*_test.py"))
+    previous_modules = {
+        name: sys.modules.pop(name) for name in module_names if name in sys.modules
     }
+    previous_path = sys.path[:]
+    try:
+        sys.path.insert(0, str(directory))
+        suite = unittest.TestLoader().discover(str(test_directory), pattern="*_test.py")
+        result = RecordingResult()
+        suite.run(result)
+        if result.testsRun != expected_tests:
+            raise RuntimeError(f"Expected {expected_tests} upstream tests; got {result.testsRun}")
+        return {
+            "suite": f"exercism/python@{UPSTREAM_SHA}" + (":trial-002" if candidate.endswith("_002") else ""),
+            "passed": sum(item["passed"] for item in result.cases),
+            "total": result.testsRun,
+            "cases": result.cases,
+        }
+    finally:
+        sys.path[:] = previous_path
+        for name in module_names:
+            sys.modules.pop(name, None)
+        sys.modules.update(previous_modules)
 
 
 def main():
