@@ -40,7 +40,8 @@ the observed CI failure; hash-verified upstream files remain unchanged.
 
 The report comparator checks that each recorded pass/fail flag agrees with
 its reported actual value, expected value, and error status, in addition to
-matching case identities and tallying fixed/regressed cases. This catches
+matching case identities, rejecting duplicate observations, and tallying
+fixed/regressed cases. This catches
 internally inconsistent JSON records, **not** falsified matching values,
 unauthenticated reports, contamination, or a misleading test oracle.
 

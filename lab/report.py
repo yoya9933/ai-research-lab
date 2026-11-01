@@ -54,9 +54,12 @@ def compare(baseline, candidate):
         raise ValueError("Cannot compare different or unidentified suites")
     if baseline["total"] != candidate["total"]:
         raise ValueError("Case count differs")
-    for before, after in zip(baseline["cases"], candidate["cases"]):
-        if _case_identity(before) != _case_identity(after):
-            raise ValueError("Case order, input or expected answer differs")
+    before_ids = [_case_identity(item) for item in baseline["cases"]]
+    after_ids = [_case_identity(item) for item in candidate["cases"]]
+    if len(set(before_ids)) != len(before_ids) or len(set(after_ids)) != len(after_ids):
+        raise ValueError("Duplicate evaluator case identity")
+    if before_ids != after_ids:
+        raise ValueError("Case order, input or expected answer differs")
 
     pairs = zip(baseline["cases"], candidate["cases"])
     fixed = sum(not a["passed"] and b["passed"] for a, b in pairs)
