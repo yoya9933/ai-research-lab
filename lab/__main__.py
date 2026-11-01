@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from .cases import CASES, FOLLOWUP_CASES
+from .report import same_value
 
 
 def evaluate(module, cases=CASES):
@@ -18,7 +19,7 @@ def evaluate(module, cases=CASES):
         for args, expected in samples:
             try:
                 actual = function(*deepcopy(args))
-                passed = type(actual) is type(expected) and actual == expected
+                passed = same_value(actual, expected)
                 error = None
             except Exception as exc:
                 actual, passed, error = None, False, f"{type(exc).__name__}: {exc}"

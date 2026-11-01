@@ -24,6 +24,13 @@ class EvaluatorTests(unittest.TestCase):
         failing = {case["task"] for case in report["cases"] if not case["passed"]}
         self.assertEqual(failing, set(CASES))
 
+    def test_nested_boolean_is_not_integer_in_evaluator(self):
+        sample = {"normalize": [(([0, 0],), [0, 0])]}
+        module = SimpleNamespace(normalize=lambda values: [False, False])
+        report = evaluate(module, sample)
+        self.assertEqual((report["passed"], report["total"]), (0, 1))
+        self.assertFalse(report["cases"][0]["passed"])
+
     def test_missing_function_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "Missing callable"):
             evaluate(object())

@@ -126,6 +126,18 @@ class CompareTests(unittest.TestCase):
                     compare(self.original, changed)
 
 
+    def test_reject_forged_nested_numeric_equality(self):
+        forged = {
+            "suite": "nested", "passed": 1, "total": 1,
+            "cases": [{
+                "task": "nested", "args": [], "expected": [0, 0],
+                "actual": [False, False], "passed": True, "error": None,
+            }],
+        }
+        self.assertEqual(forged["cases"][0]["actual"], [0, 0])
+        with self.assertRaisesRegex(ValueError, "Invalid"):
+            compare(forged, copy.deepcopy(forged))
+
     def test_reject_duplicate_cases_even_when_both_reports_match(self):
         before = copy.deepcopy(self.original)
         after = copy.deepcopy(self.candidate)
