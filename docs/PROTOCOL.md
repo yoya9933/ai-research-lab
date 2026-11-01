@@ -43,3 +43,14 @@ its reported actual value, expected value, and error status, in addition to
 matching case identities and tallying fixed/regressed cases. This catches
 internally inconsistent JSON records, **not** falsified matching values,
 unauthenticated reports, contamination, or a misleading test oracle.
+
+## Frozen candidate source integrity
+
+`tests/test_frozen_candidate_sources.py` checks Git blob hashes of the
+three Exercism trial-002 candidate files at their pre-test commit, the
+first `tokenize-rt` patch at its pre-follow-up commit, and the distinct
+later roundtrip patch. These offline checks catch accidental changes to
+candidate source bytes after their recorded freeze points. The historical
+Git commits establish chronology; hashing alone does **not** prove the
+model had no prior exposure, authenticate the oracle, or prevent a reviewer
+from intentionally changing both code and checksum in a future PR.
