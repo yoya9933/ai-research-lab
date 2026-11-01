@@ -20,3 +20,19 @@ Versions indicate scope, **not** demonstrated improvements in AI capability.
 - [x] v0.3.0: Reproduce a real upstream issue (#30 in humanize) using a pinned pre-fix source snapshot and external reporter's test case.
 - [x] v0.3.1: Commit a minimal candidate fix separate from baseline and run correctness/regression tests.
 - [x] v0.3.2: Replay a second human-reported formatting regression on the unchanged candidate; disclose shared root cause.
+
+## External bug corpus status (2026-11-01)
+
+- [x] **Non-blind reproducibility milestone:** Seven distinct locally replayed
+  defect families across four upstream projects (counting humanize #20/#30 as
+  one family, and explicitly flagging unmerged humanize PR #486). Sources,
+  licenses, pinned commits, candidate comparisons and statuses are audited in
+  [the evidence ledger](REAL_WORLD_CASES.md).
+- [x] **Post-freeze bounded checks:** more-itertools has 372 deterministic
+  input pairs validated after the candidate was committed; the frozen
+  candidate source is hash-checked. Boltons and tokenize-rt retained their
+  unsuccessful post-freeze property outcomes and separate later candidates.
+- [ ] **Not yet achieved:** Independently authored and withheld grading
+  material for multiple real defects, uncontaminated repeated model trials,
+  statistically defensible uncertainty estimates or a general AI-improvement
+  claim. Keep v0.2 and the broader v0.3 research goals open.

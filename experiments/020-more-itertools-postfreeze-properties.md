@@ -33,9 +33,14 @@ mistaken for a regression.
 
 Run `python -m unittest tests.test_more_itertools_1342_followup -v`
 or the repository's full `python -m unittest discover -s tests -v`.
-CI success/failure is the execution evidence; the numbers above are
-pre-declared expectations and must not be described as measured until
-the tests have actually passed.
+The [PR #45 CI run](https://github.com/yoya9933/ai-research-lab/actions/runs/41285743823)
+and the [post-merge main run](https://github.com/yoya9933/ai-research-lab/actions/runs/41285778031)
+both completed **success**. The five focused standard-library test methods
+therefore verified the declared **248 unchanged positive-size controls**,
+**31 zero-size cases** with no source consumption, and **93 negative-size
+cases** with the specific error and no consumption, over 372 ordered inputs.
+These are bounded test observations, not a confidence interval or independent
+model trials.
 
 ## Limits
 
