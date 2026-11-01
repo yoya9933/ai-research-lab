@@ -16,3 +16,21 @@ Apply the [Ponytail](https://github.com/DietrichGebert/ponytail) principle: unde
 - Prefer work that advances the [research success gates](docs/RESEARCH_GOAL.md) over increasing commit, case or test counts.
 - Freeze [strategy memory](docs/STRATEGY_MEMORY.md) before controlled comparisons; do not expose independently withheld answers to repair sessions.
 - Clearly separate an external-memory workflow improvement from a change to model weights or internal reasoning tokens.
+## Research-first change policy
+
+- Prioritize **G2** in [the roadmap](docs/ROADMAP.md): six externally selected
+  defect families, one frozen first-attempt candidate for each Chat A/B arm,
+  and independent assessor-held scoring after both commits. Until a real
+  assessor exists, clearly report `0/6 — blocked`; do not simulate one.
+- Before writing code, identify the research gate, a measurable completion
+  criterion and the real failure preventing that gate. If the change only
+  increases test, CI or commit counts, **do not make it**.
+- Batch related changes into **one reviewable PR per meaningful deliverable**.
+  Separate commits only for necessary candidate-freeze chronology or genuine
+  failures; never split a single fix into multiple cosmetic versions.
+- Reuse the current standard-library grader and GitHub Actions. Change them
+  only when a **reproduced, trial-blocking defect** justifies it.
+- Keep G3, G4 and v1.0 pending until their actual acceptance evidence exists.
+  A CI pass, public replay or prepared study document is not a hidden score.
+- If external participation is the blocker, deliver a precise assessor
+  handoff and stop making unrelated engineering edits.
