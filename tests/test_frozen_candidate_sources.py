@@ -45,6 +45,11 @@ FROZEN_BLOBS = {
         "e7d35226208aa3401f684ed2c1c49768356ad74d",
     "benchmarks/bugs/boltons_480/patch.py":
         "b172171c58b4245d8a0e9e2e10a4c0f41a170552",
+    # Exploratory two-defect batch: first-attempt candidate SHA 4939deccc45a839e969d53a0cd33bda4f6685b10.
+    "benchmarks/bugs/boltons_348/patch.py":
+        "341df8927a7235d62acf74c8ba867870394509e0",
+    "benchmarks/bugs/more_itertools_1214/patch.py":
+        "3b35cafbe1c720bfde8a3a72c2ce863a1afc0702",
     # The following wrappers also match their original candidate-PR blobs.
     "benchmarks/bugs/boltons_479/patch.py":
         "2026d99085619211b75366a820cf9614afed9fe5",
