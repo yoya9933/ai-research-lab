@@ -80,7 +80,11 @@ Without the flag, the comparison remains informational. Every
 saved comparison includes SHA-256 digests of **both exact original input
 files** (`input_sha256`), including when a regression gate exits nonzero;
 this allows the inputs used for an audit to be matched byte-for-byte.
-These hashes alone do not authenticate who authored the inputs. The tool
+These hashes alone do not authenticate who authored the inputs.
+GitHub Actions now stores the three comparisons and their six original
+public-test input reports in a short-lived `scored-comparisons` Artifact
+(7-day retention), so a reviewer can verify each comparison's input
+digests and case-level evidence from the same CI run. The tool
 supports the existing lab/Exercism evaluator report format; third-party
 bug reproducers do not automatically emit that schema. Scores still
 reflect **only** the compared cases.
