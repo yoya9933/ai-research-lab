@@ -56,6 +56,28 @@ class EvaluatorTests(unittest.TestCase):
         item = evaluate(buggy)["cases"][0]
         self.assertTrue({"task", "args", "expected", "actual", "passed", "error"} <= item.keys())
 
+    def test_candidate_reusing_mutable_output_cannot_rewrite_prior_result(self):
+        shared = {"value": None}
+
+        def reuse(value):
+            shared["value"] = value
+            return shared
+
+        samples = {"reuse": [
+            ((1,), {"value": 1}),
+            ((2,), {"value": 2}),
+        ]}
+        report = evaluate(SimpleNamespace(reuse=reuse), samples)
+        self.assertEqual((report["passed"], report["total"]), (2, 2))
+        self.assertEqual(
+            [case["actual"] for case in report["cases"]],
+            [{"value": 1}, {"value": 2}],
+        )
+        self.assertIsNot(report["cases"][0]["actual"], shared)
+        self.assertIsNot(report["cases"][1]["actual"], shared)
+        report["suite"] = "mutable-result-snapshot"
+        self.assertEqual(compare(report, report)["baseline"], 2)
+
     def test_candidate_cannot_rewrite_expected_answer_in_current_score(self):
         expected = {"value": 0}
         samples = {"rewrite": [((), expected)]}
