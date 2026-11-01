@@ -38,6 +38,13 @@ exercise. Existing pinned upstream suites contain no such annotations.
 This fails closed on unsupported test semantics; it does not certify
 unseen assertions or prevent contamination.
 
+A third-party test **import or syntax error** is not a valid failed
+candidate test: unittest can create a synthetic `_FailedTest` whose count
+accidentally matches the expected real-test count. The loader checks its
+native `TestLoader.errors` and **rejects the whole evaluation before
+executing a partial test suite**, preserving the discovery traceback.
+This guards test infrastructure errors, not model correctness.
+
 The unittest runner records a **single parent test** even if the parent
 executes multiple `self.subTest()` contexts. Failed subtests are now
 attached to that parent's error text (including every failing context),

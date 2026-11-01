@@ -66,7 +66,12 @@ def evaluate(candidate):
     previous_path = sys.path[:]
     try:
         sys.path.insert(0, str(directory))
-        suite = unittest.TestLoader().discover(str(test_directory), pattern="*_test.py")
+        loader = unittest.TestLoader()
+        suite = loader.discover(str(test_directory), pattern="*_test.py")
+        if loader.errors:
+            raise RuntimeError(
+                "Upstream test discovery failed:\n" + "\n".join(loader.errors)
+            )
         result = RecordingResult()
         suite.run(result)
         if result.testsRun != expected_tests:

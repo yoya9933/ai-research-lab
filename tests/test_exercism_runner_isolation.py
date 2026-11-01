@@ -113,6 +113,37 @@ class TrackIsolationTests(unittest.TestCase):
                     self.assertIn("RuntimeError: failure inside subtest", case["error"])
                     self.assertIn("value=123", case["error"])
 
+    def test_failed_test_module_discovery_cannot_be_scored(self):
+        sources = {
+            "import_error": 'raise ImportError("independent test dependency failed")\n',
+            "syntax_error": "def broken(:\n",
+        }
+        for kind, source in sources.items():
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                (root / "candidate").mkdir()
+                test_dir = root / "tests"
+                test_dir.mkdir()
+                (test_dir / "broken_suite_test.py").write_text(
+                    source, encoding="utf-8"
+                )
+                # unittest represents one module import failure as one
+                # synthetic _FailedTest, which can mask a matching count.
+                probe = unittest.TestLoader()
+                suite = probe.discover(str(test_dir), pattern="*_test.py")
+                self.assertEqual(suite.countTestCases(), 1)
+                self.assertEqual(len(probe.errors), 1)
+                original_path = sys.path[:]
+                with mock.patch.object(runner, "ROOT", root), mock.patch.object(
+                    runner, "TRACKS", {"synthetic": ("candidate", "tests", 1)}
+                ):
+                    with self.assertRaisesRegex(
+                        RuntimeError, "Upstream test discovery failed"
+                    ) as caught:
+                        runner.evaluate("synthetic")
+                self.assertIn("broken_suite_test", str(caught.exception))
+                self.assertEqual(sys.path, original_path)
+
     def test_repeated_and_reversed_track_order(self):
         original_path = sys.path[:]
         tracks = (
