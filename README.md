@@ -51,7 +51,7 @@ Use `--suite followup` to grade 20 additional cases introduced after the first c
 ```bash
 python -m lab evaluate --module lab.buggy --output results/baseline.json
 python -m lab evaluate --module lab.attempt_001 --output results/attempt.json
-python -m lab.report results/baseline.json results/attempt.json --output results/comparison.json
+python -m lab.report results/baseline.json results/attempt.json --output results/comparison.json --fail-on-regression
 ```
 
 The comparison displays score changes, cases fixed and cases regressed.
@@ -59,9 +59,13 @@ The optional JSON summary preserves each changed case's task, input,
 expected output and both actual/error outcomes, including **regressions**.
 It rejects different suites, altered inputs/expected values, and
 inconsistent reported totals; invalid comparisons never write the
-requested output. The tool supports the existing lab/Exercism evaluator
-report format; third-party bug reproducers do not automatically emit
-that schema. Scores still reflect **only** the compared cases.
+requested output. Use `--fail-on-regression` when a downstream CI job must reject a
+candidate that breaks any previously passing case; it exits with status
+1 **after** printing counts and writing any requested JSON evidence.
+Without the flag, the comparison remains informational. The tool
+supports the existing lab/Exercism evaluator report format; third-party
+bug reproducers do not automatically emit that schema. Scores still
+reflect **only** the compared cases.
 
 ## Deterministic property tests
 

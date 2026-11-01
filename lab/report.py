@@ -104,6 +104,8 @@ def main():
     parser.add_argument("candidate", type=Path)
     parser.add_argument("--output", type=Path,
                         help="Save validated case-level comparison as JSON")
+    parser.add_argument("--fail-on-regression", action="store_true",
+                        help="Exit 1 if any previously passing case regresses")
     args = parser.parse_args()
     baseline = json.loads(args.baseline.read_text(encoding="utf-8"))
     candidate = json.loads(args.candidate.read_text(encoding="utf-8"))
@@ -119,6 +121,8 @@ def main():
         f"{result['candidate']}/{result['total']} (delta {result['delta']:+d}); "
         f"fixed={result['fixed']}, regressed={result['regressed']}"
     )
+    if args.fail_on_regression and result["regressed"]:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
