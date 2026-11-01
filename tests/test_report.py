@@ -312,6 +312,37 @@ class CompareTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Non-finite"):
                     compare(malformed, self.candidate)
 
+    def test_cli_rejects_duplicate_input_fields(self):
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+
+        for name, original, replacement in (
+            ("baseline", '"suite": "published"',
+             '"suite": "published", "suite": "published"'),
+            ("candidate", '"error": null', '"error": null, "error": null'),
+        ):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                before, after = root / "before.json", root / "after.json"
+                output = root / "audit.json"
+                before.write_text(json.dumps(self.original), encoding="utf-8")
+                after.write_text(json.dumps(self.candidate), encoding="utf-8")
+                path = before if name == "baseline" else after
+                payload = path.read_text(encoding="utf-8")
+                self.assertIn(original, payload)
+                path.write_text(payload.replace(original, replacement, 1), encoding="utf-8")
+                result = subprocess.run(
+                    [sys.executable, "-m", "lab.report", str(before), str(after),
+                     "--output", str(output)],
+                    capture_output=True, text=True, check=False,
+                )
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("Duplicate JSON object key", result.stderr)
+                self.assertFalse(output.exists())
+
     def test_cli_rejects_nonstandard_json_constants_before_writing_evidence(self):
         import json
         import subprocess

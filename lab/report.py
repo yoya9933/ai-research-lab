@@ -135,6 +135,15 @@ def compare(baseline, candidate):
     }
 
 
+def _unique_json_keys(pairs):
+    value = {}
+    for key, item in pairs:
+        if key in value:
+            raise ValueError(f"Duplicate JSON object key: {key}")
+        value[key] = item
+    return value
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("baseline", type=Path)
@@ -146,8 +155,8 @@ def main():
     args = parser.parse_args()
     baseline_bytes = args.baseline.read_bytes()
     candidate_bytes = args.candidate.read_bytes()
-    baseline = json.loads(baseline_bytes.decode("utf-8"))
-    candidate = json.loads(candidate_bytes.decode("utf-8"))
+    baseline = json.loads(baseline_bytes.decode("utf-8"), object_pairs_hook=_unique_json_keys)
+    candidate = json.loads(candidate_bytes.decode("utf-8"), object_pairs_hook=_unique_json_keys)
     result = compare(baseline, candidate)
     if args.output and any(
         args.output.resolve() == path.resolve()
