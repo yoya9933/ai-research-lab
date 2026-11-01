@@ -23,3 +23,21 @@ Run `python -m unittest tests.test_pygments_3190_candidate -v`.
 The public upstream fix was already known before writing this patch,
 so these observations are **not blind**; they check a narrow,
 single-module property and do not establish a performance improvement.
+
+## Post-freeze original upstream regression cases
+
+Only **after** the candidate commit
+`94a4c403456de093d3350d1d65fb8939f1873849`, two
+original Pygments PR #3190 test function bodies were read from
+[upstream tests/test_regexopt.py](https://github.com/pygments/pygments/blob/64226095eb736dbf23e16786f04c82f3a3a86b92/tests/test_regexopt.py)
+(Git blob `f2d566541c37ac8b7ab35b239bdea4aeea565b56`).
+They are copied **verbatim** into `upstream_tests.py`, apart from module
+imports necessary to use the pinned standalone source. The `print`
+statements are retained; the stdlib test runner redirects their output
+before JSON scoring.
+
+Run `python -m unittest tests.test_pygments_3190_upstream -v`.
+The two original assertions should fail on historical baseline and
+pass after the frozen candidate. This tests only current-conversation
+exposure chronology; the public repair was already visible and
+**no blind AI ability measurement is claimed**.

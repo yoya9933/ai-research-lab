@@ -18,6 +18,8 @@ ROOT = Path(__file__).resolve().parents[1]
 # d189e4826609fa9d063b42155170167880036ca3.
 # more-itertools #1342 candidate committed before this property matrix:
 # 33cd99acfdf62b13033db865f4b0302a6a7ebd96.
+# Pygments #3190 candidate was committed before fetching its original test file:
+# 94a4c403456de093d3350d1d65fb8939f1873849.
 FROZEN_BLOBS = {
     "benchmarks/exercism/trial_002/attempt_002/armstrong_numbers.py":
         "53f48efbe999d4891a2537c9f44b6f62f5c6a6bb",
@@ -31,7 +33,9 @@ FROZEN_BLOBS = {
         "e85619f2dbc03545cfdb7d3c8cb98181e8df2398",
     "benchmarks/bugs/more_itertools_1342/patch.py":
         "b26e35b35a8911e8a117e3f7f10a703291b4b585",
-}
+    "benchmarks/bugs/pygments_3190/patch.py":
+        "59d075d0763feb68fb2385b71f95cf2835c68afe",
+
 
 
 class FrozenCandidateSourceTests(unittest.TestCase):
