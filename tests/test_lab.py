@@ -56,6 +56,23 @@ class EvaluatorTests(unittest.TestCase):
         item = evaluate(buggy)["cases"][0]
         self.assertTrue({"task", "args", "expected", "actual", "passed", "error"} <= item.keys())
 
+    def test_candidate_cannot_rewrite_expected_answer_in_current_score(self):
+        expected = {"value": 0}
+        samples = {"rewrite": [((), expected)]}
+
+        def rewrite():
+            # A trusted module can still hold an external reference to
+            # the oracle; grading must use its pre-call snapshot.
+            expected["value"] = 42
+            return {"value": 42}
+
+        report = evaluate(SimpleNamespace(rewrite=rewrite), samples)
+        self.assertEqual((report["passed"], report["total"]), (0, 1))
+        case = report["cases"][0]
+        self.assertEqual(case["expected"], {"value": 0})
+        self.assertEqual(case["actual"], {"value": 42})
+        self.assertFalse(case["passed"])
+
     def test_candidate_cannot_mutate_input_case_data(self):
         def destructive_unique(values):
             values.clear()

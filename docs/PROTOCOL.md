@@ -8,7 +8,7 @@ Can a chat-based model improve defect repair through explicit hypotheses, determ
 
 1. Select a bug from `lab.buggy` with known cases. Don't read `lab.solutions` until the attempt is complete.
 2. Record the attempt date, code commit, exact prompt, hypothesis, patch, test command, test output, and whether any answer-key information was exposed.
-3. Run the evaluator on trusted candidate code. A case passes only when the result exactly equals the expected value; exceptions count as failures.
+3. Run the evaluator on trusted candidate code. A case passes only when the result exactly equals the expected value; exceptions count as failures. The local toy evaluator takes a deep copy of the **full case suite** before invoking candidate functions, so a candidate's side effect on a shared external expected-value object cannot rewrite the oracle for the current grade. It cannot prevent a trusted module from mutating the caller's global objects or sandbox that module; use a fresh process for independent runs.
 4. Report passed cases / total cases. Keep failed attempts and note threats to validity.
 5. Re-run all tests after changes and review the diff in a pull request.
 
