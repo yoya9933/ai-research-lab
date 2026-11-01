@@ -19,7 +19,7 @@ def evaluate(module, cases=CASES):
             raise ValueError(f"Missing callable: {name}")
         for args, expected in samples:
             try:
-                actual = function(*deepcopy(args))
+                actual = deepcopy(function(*deepcopy(args)))
                 passed = same_value(actual, expected)
                 error = None
                 # Preserve failed type distinctions that JSON would erase.
