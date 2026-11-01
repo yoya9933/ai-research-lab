@@ -108,9 +108,6 @@ def evaluate(candidate):
             raise RuntimeError(f"Expected {expected_tests} upstream tests; got {result.testsRun}")
         if len(identities) != result.testsRun or len(set(identities)) != result.testsRun:
             raise RuntimeError("Missing or duplicate upstream test identities")
-        incomplete = [c["task"] for c in result.cases if c["actual"] == "incomplete"]
-        if incomplete:
-            raise RuntimeError("Unscored upstream tests: " + ", ".join(incomplete))
         if result.skipped or result.expectedFailures or result.unexpectedSuccesses:
             raise RuntimeError(
                 "Unscorable upstream test outcomes: "
@@ -118,6 +115,9 @@ def evaluate(candidate):
                 f"expected_failures={len(result.expectedFailures)}, "
                 f"unexpected_successes={len(result.unexpectedSuccesses)}"
             )
+        incomplete = [c["task"] for c in result.cases if c["actual"] == "incomplete"]
+        if incomplete:
+            raise RuntimeError("Unscored upstream tests: " + ", ".join(incomplete))
         return {
             "suite": f"exercism/python@{UPSTREAM_SHA}" + (":trial-002" if candidate.endswith("_002") else ""),
             "passed": sum(item["passed"] for item in result.cases),
