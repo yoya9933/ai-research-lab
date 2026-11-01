@@ -12,6 +12,10 @@
 - [ ] v1.0: Publish a reproducible, reviewed case study with limitations.
 
 Versions indicate scope, **not** demonstrated improvements in AI capability.
+- [x] v0.4.0 (partial, descriptive only): Export per-report counts of
+  passing cases, wrong outputs, and recorded errors, with full accounting
+  tests. Does **not** complete uncertainty estimates: independent trials
+  and withheld assessments remain missing.
 - [x] v0.2.0 (partial): Pin 3 Exercism tasks and 29 original MIT-licensed tests; verify incomplete baseline.
 - [x] v0.2.1: Record a chat-authored candidate and externally sourced test scores, disclose exposure.
 - [x] v0.2.2: Commit a second exercise candidate before viewing upstream test files.

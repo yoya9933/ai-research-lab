@@ -35,6 +35,19 @@ def _case_identity(item):
         raise ValueError("Invalid evaluator case identity") from exc
 
 
+def _outcome_counts(report):
+    counts = {"passed": 0, "wrong_output": 0, "reported_error": 0}
+    for case in report["cases"]:
+        if case["passed"]:
+            kind = "passed"
+        elif case["error"] is not None:
+            kind = "reported_error"
+        else:
+            kind = "wrong_output"
+        counts[kind] += 1
+    return counts
+
+
 def compare(baseline, candidate):
     for report in (baseline, candidate):
         if not isinstance(report, dict):
@@ -115,6 +128,10 @@ def compare(baseline, candidate):
         "regressed": sum(item["change"] == "regressed" for item in changes),
         "changes": changes,
         "changed_failures": changed_failures,
+        "outcome_counts": {
+            "baseline": _outcome_counts(baseline),
+            "candidate": _outcome_counts(candidate),
+        },
     }
 
 

@@ -114,7 +114,12 @@ both observed values/errors for every fix and regression, plus
 `changed_failures` for inputs that **still fail both versions** but
 produce a different wrong value/exception. Such unresolved changes are
 not counted as fixes or pass-to-fail regressions and are not omitted
-from the saved evidence. Output is written
+from the saved evidence. `outcome_counts` separately accounts for every
+case as passed, wrong output without error, or any reported error
+(including assertion failures and serialization diagnostics). The three
+categories sum to each report's total. They describe test outcomes,
+**not independent repair attempts**, and are not suitable for confidence
+intervals from the existing correlated cases. Output is written
 only after the existing same-suite validation succeeds. When saved,
 the comparison JSON includes SHA-256 hashes of the exact baseline and
 candidate input *file bytes*, read once for scoring and hashing. These

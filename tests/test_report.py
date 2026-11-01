@@ -54,6 +54,41 @@ class CompareTests(unittest.TestCase):
                 self.assertEqual(item["candidate_error"], candidate["error"])
         self.assertEqual(compare(self.original, self.original)["changes"], [])
 
+    def test_outcome_taxonomy_counts_all_cases_without_changing_scores(self):
+        before = {
+            "suite": "descriptive-only", "passed": 1, "total": 3,
+            "cases": [
+                {"task": "success", "args": [], "expected": 1,
+                 "actual": 1, "passed": True, "error": None},
+                {"task": "wrong_value", "args": [], "expected": 2,
+                 "actual": 3, "passed": False, "error": None},
+                {"task": "reported_error", "args": [], "expected": "pass",
+                 "actual": "failure", "passed": False,
+                 "error": "AssertionError: expected pass"},
+            ],
+        }
+        after = copy.deepcopy(before)
+        after["cases"][1]["actual"] = 2
+        after["cases"][1]["passed"] = True
+        after["cases"][2]["error"] = "RuntimeError: changed but still failed"
+        after["passed"] = 2
+        result = compare(before, after)
+        self.assertEqual(result["outcome_counts"], {
+            "baseline": {"passed": 1, "wrong_output": 1, "reported_error": 1},
+            "candidate": {"passed": 2, "wrong_output": 0, "reported_error": 1},
+        })
+        self.assertEqual((result["fixed"], result["regressed"]), (1, 0))
+        self.assertEqual(len(result["changed_failures"]), 1)
+        for phase in ("baseline", "candidate"):
+            self.assertEqual(sum(result["outcome_counts"][phase].values()), 3)
+
+    def test_real_suite_outcome_counts_agree_with_scores(self):
+        result = compare(self.original, self.candidate)
+        for phase in ("baseline", "candidate"):
+            counts = result["outcome_counts"][phase]
+            self.assertEqual(counts["passed"], result[phase])
+            self.assertEqual(sum(counts.values()), result["total"])
+
     def test_changed_still_failing_case_is_recorded_without_score_inflation(self):
         after = copy.deepcopy(self.original)
         failed = next(item for item in after["cases"] if not item["passed"])
