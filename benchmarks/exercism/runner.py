@@ -42,7 +42,7 @@ class RecordingResult(unittest.TestResult):
             case = self.cases[-1]
             kind = "failure" if issubclass(err[0], test.failureException) else "error"
             case["actual"] = "error" if "error" in (case["actual"], kind) else "failure"
-            detail = self._exc_info_to_string(err, subtest)
+            detail = f"{subtest.id()}\n{self._exc_info_to_string(err, subtest)}"
             case["error"] = "\n".join(filter(None, (case["error"], detail)))
 
     def __init__(self):
