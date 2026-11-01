@@ -115,6 +115,9 @@ def evaluate(candidate):
                 f"expected_failures={len(result.expectedFailures)}, "
                 f"unexpected_successes={len(result.unexpectedSuccesses)}"
             )
+        incomplete = [c["task"] for c in result.cases if c["actual"] == "incomplete"]
+        if incomplete:
+            raise RuntimeError("Unscored upstream tests: " + ", ".join(incomplete))
         return {
             "suite": f"exercism/python@{UPSTREAM_SHA}" + (":trial-002" if candidate.endswith("_002") else ""),
             "passed": sum(item["passed"] for item in result.cases),

@@ -72,7 +72,10 @@ the same test identifier**, so `testsRun` can match the expected count
 without identifying the intended distinct cases. The runner now rejects
 missing or duplicated test IDs. This prevents duplicate-case inflation
 of the external score; it does not prove that a unique test ID corresponds
-to an independent defect or a hidden test.
+to an independent defect or a hidden test. A test that called
+`startTest` but never reported success, failure or error (its actual
+status remains `incomplete`) is also rejected as **unscored**, rather
+than assigned a legitimate failed-candidate result.
 
 The unittest runner records a **single parent test** even if the parent
 executes multiple `self.subTest()` contexts. Failed subtests are now
