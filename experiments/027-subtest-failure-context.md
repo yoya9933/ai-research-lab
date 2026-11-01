@@ -41,3 +41,19 @@ The synthetic parent test is **one** scored unit despite multiple
 remain part of this experiment's provenance. This procedure does
 not establish independent hidden tests, full upstream coverage,
 untrusted Python sandboxing or AI debugging capability improvements.
+
+
+## Follow-up: parent exception after failed subtests
+
+After the initial CI fix was merged in
+[PR #61](https://github.com/yoya9933/ai-research-lab/pull/61)
+([corrected CI #41292468594](https://github.com/yoya9933/ai-research-lab/actions/runs/41292468594)
+**success**), a remaining error-recording path was inspected:
+`addFailure` and `addError` **replaced** the parent's error text
+instead of appending. A parent-level failure/error after two
+`subTest()` failures would therefore lose earlier named contexts.
+A separate change tests both parent failure and unexpected exception
+after two failed subtests, retaining all three diagnostics while
+counting **one parent test**. This is another investigator-authored
+nonblind test; the same externally frozen Exercism candidate and
+upstream data remain unchanged. Check the new PR CI for the outcome.

@@ -113,6 +113,40 @@ class TrackIsolationTests(unittest.TestCase):
                     self.assertIn("RuntimeError: failure inside subtest", case["error"])
                     self.assertIn("value=123", case["error"])
 
+    def test_parent_failure_after_subtests_preserves_all_diagnostics(self):
+        endings = {
+            "failure": "self.fail('outer assertion')",
+            "error": "raise RuntimeError('outer crash')",
+        }
+        for name, ending in endings.items():
+            with self.subTest(kind=name), tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                (root / "candidate").mkdir()
+                test_dir = root / "tests"
+                test_dir.mkdir()
+                code = (
+                    "import unittest\n\nclass SyntheticTest(unittest.TestCase):\n"
+                    "    def test_case(self):\n"
+                    "        for number in (1, 2):\n"
+                    "            with self.subTest(number=number):\n"
+                    "                self.assertEqual(number, 0)\n"
+                    f"        {ending}\n"
+                )
+                (test_dir / "mixed_case_test.py").write_text(code, encoding="utf-8")
+                with mock.patch.object(runner, "ROOT", root), mock.patch.object(
+                    runner, "TRACKS", {"synthetic": ("candidate", "tests", 1)}
+                ):
+                    report = runner.evaluate("synthetic")
+                self.assertEqual((report["passed"], report["total"]), (0, 1))
+                case, = report["cases"]
+                self.assertEqual(case["actual"], name)
+                self.assertIn("number=1", case["error"])
+                self.assertIn("number=2", case["error"])
+                self.assertIn(
+                    "outer assertion" if name == "failure" else "outer crash",
+                    case["error"],
+                )
+
     def test_failed_test_module_discovery_cannot_be_scored(self):
         sources = {
             "import_error": 'raise ImportError("independent test dependency failed")\n',
