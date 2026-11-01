@@ -126,6 +126,18 @@ class CompareTests(unittest.TestCase):
                     compare(self.original, changed)
 
 
+    def test_reject_duplicate_cases_even_when_both_reports_match(self):
+        before = copy.deepcopy(self.original)
+        after = copy.deepcopy(self.candidate)
+        for report in (before, after):
+            duplicate = copy.deepcopy(report["cases"][0])
+            report["cases"].append(duplicate)
+            report["total"] += 1
+            report["passed"] += int(duplicate["passed"])
+        with self.assertRaisesRegex(ValueError, "Duplicate"):
+            compare(before, after)
+
+
 
 if __name__ == "__main__":
     unittest.main()
