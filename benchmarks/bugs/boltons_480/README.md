@@ -24,3 +24,18 @@ same nine inputs: **3 corrected revocation outcomes** and **6 unchanged
 controls**. The candidate is informed by the reporter's published diagnosis
 and is **not** a blind or independently scored repair. No upstream patch is
 submitted and no general security claim is made.
+
+## Investigator-authored post-freeze roundtrip check
+
+[Experiment 017](../../../experiments/017-boltons-from-int-postfreeze.md)
+found 63 `FilePerms.from_int` leading-zero numeric roundtrip failures in
+512 modes on both the pinned original and the *frozen original candidate*.
+This is an independently specified property but **not an independently
+authored external report**.
+
+[Experiment 018](../../../experiments/018-boltons-from-int-secondary-candidate.md)
+keeps both unchanged and introduces a separately named secondary candidate
+in `patch_roundtrip.py`. Run
+`python -m unittest tests.test_boltons_480_roundtrip_candidate -v`
+to check all 512 modes and preserve the prior permission-revocation results.
+This follow-up was investigator-visible before patching; it is not blind.
