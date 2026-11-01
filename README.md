@@ -55,8 +55,12 @@ python -m lab.report results/baseline.json results/attempt.json --output results
 ```
 
 The comparison displays score changes, cases fixed and cases regressed.
-The optional JSON summary preserves each changed case's task, input,
-expected output and both actual/error outcomes, including **regressions**.
+The optional JSON summary preserves each fixed/regressed case's task,
+input, expected output and both actual/error outcomes. It separately
+lists `changed_failures`: cases that **still fail on both versions**
+but now return a different wrong value or error. Such cases do **not**
+count as repairs or pass-to-fail regressions; recording them preserves
+unsuccessful debugging evidence.
 It rejects different suites, altered inputs/expected values, and
 inconsistent reported totals; invalid comparisons never write the
 requested output. The CLI also refuses an `--output` path that would

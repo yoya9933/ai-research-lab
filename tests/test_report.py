@@ -54,6 +54,29 @@ class CompareTests(unittest.TestCase):
                 self.assertEqual(item["candidate_error"], candidate["error"])
         self.assertEqual(compare(self.original, self.original)["changes"], [])
 
+    def test_changed_still_failing_case_is_recorded_without_score_inflation(self):
+        after = copy.deepcopy(self.original)
+        failed = next(item for item in after["cases"] if not item["passed"])
+        before = next(item for item in self.original["cases"]
+                      if item["task"] == failed["task"] and item["args"] == failed["args"])
+        failed["actual"] = {"new_wrong_output": True}
+        failed["error"] = "RuntimeError: different unsuccessful behavior"
+        failed["passed"] = False
+        result = compare(self.original, after)
+        self.assertEqual(
+            (result["baseline"], result["candidate"], result["fixed"], result["regressed"]),
+            (11, 11, 0, 0),
+        )
+        self.assertEqual(result["changes"], [])
+        self.assertEqual(len(result["changed_failures"]), 1)
+        item = result["changed_failures"][0]
+        self.assertEqual(item["change"], "still_failing_changed")
+        self.assertEqual(item["baseline_actual"], before["actual"])
+        self.assertEqual(item["candidate_actual"], failed["actual"])
+        self.assertEqual(item["baseline_error"], before["error"])
+        self.assertEqual(item["candidate_error"], failed["error"])
+        self.assertEqual(compare(self.original, self.original)["changed_failures"], [])
+
     def test_regressed_cases_are_exposed_with_original_values(self):
         changed = copy.deepcopy(self.candidate)
         control = next(
