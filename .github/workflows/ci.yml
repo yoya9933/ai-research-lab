@@ -57,3 +57,5 @@ jobs:
         run: python -m benchmarks.bugs.tokenize_rt_33.followup
       - name: Record secondary tokenize-rt roundtrip candidate
         run: python -m benchmarks.bugs.tokenize_rt_33.roundtrip
+      - name: Replay accepted more-itertools chunked_even size bug on pinned excerpt
+        run: python -m benchmarks.bugs.more_itertools_1342.reproduce
