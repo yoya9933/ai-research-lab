@@ -29,3 +29,16 @@ complete upstream test suite**. Source/test exposure order is better
 controlled than before, but the public patch and pretrained model
 knowledge remain visible; not an independently administered blind task,
 speed measurement, or general capability trial.
+
+## Recorded first CI failure and repair
+
+[First PR #51 run #41286453516](https://github.com/yoya9933/ai-research-lab/actions/runs/41286453516)
+**failed** during the full unittest discovery because the newly edited
+`tests/test_frozen_candidate_sources.py` accidentally omitted its
+`FROZEN_BLOBS` closing brace. That was a **test-harness SyntaxError**,
+not evidence of an upstream regression. The log independently shows
+both replay methods `test_original_assertions_...` passed before
+the discovery process exited with one import error. A follow-up commit
+restores the missing brace without changing original upstream test
+function bodies or the frozen repair. Recheck the full suite before
+claiming the PR is green.

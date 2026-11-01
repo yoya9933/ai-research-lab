@@ -35,7 +35,7 @@ FROZEN_BLOBS = {
         "b26e35b35a8911e8a117e3f7f10a703291b4b585",
     "benchmarks/bugs/pygments_3190/patch.py":
         "59d075d0763feb68fb2385b71f95cf2835c68afe",
-
+}
 
 
 class FrozenCandidateSourceTests(unittest.TestCase):
