@@ -212,3 +212,12 @@ while preserving the pre-merge PR check and independent post-merge
 confirmation. Always verify the actual PR **head SHA** and successful
 GitHub Actions conclusion before merging; do not infer success from
 a different branch's earlier run.
+
+The single job has a **10-minute wall-clock timeout**. Ordinary verified
+full runs complete far below that limit (e.g.
+[main CI #41292853363](https://github.com/yoya9933/ai-research-lab/actions/runs/41292853363)
+passed), but a future infinite loop in trusted candidate/tests should not
+consume GitHub-hosted runner resources until the platform's much longer
+default limit. The timeout is a GitHub Actions native safeguard, **not** a
+Python sandbox, protection against malicious files, or a guarantee that
+every supported machine will finish within 10 minutes.
