@@ -178,6 +178,32 @@ class TrackIsolationTests(unittest.TestCase):
                 self.assertIn("broken_suite_test", str(caught.exception))
                 self.assertEqual(sys.path, original_path)
 
+    def test_test_without_final_outcome_cannot_be_scored(self):
+        source = (
+            "import unittest\n\n"
+            "class SyntheticTest(unittest.TestCase):\n"
+            "    def test_case(self):\n"
+            "        self.assertTrue(True)\n"
+            "    def run(self, result=None):\n"
+            "        result.startTest(self)\n"
+            "        result.stopTest(self)\n"
+        )
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "candidate").mkdir()
+            tests = root / "tests"
+            tests.mkdir()
+            (tests / "synthetic_test.py").write_text(source, encoding="utf-8")
+            previous = sys.path[:]
+            with mock.patch.object(runner, "ROOT", root), mock.patch.object(
+                runner, "TRACKS", {"synthetic": ("candidate", "tests", 1)}
+            ):
+                with self.assertRaisesRegex(
+                    RuntimeError, "Unscored upstream tests: .*test_case"
+                ):
+                    runner.evaluate("synthetic")
+            self.assertEqual(sys.path, previous)
+
     def test_duplicate_test_ids_do_not_inflate_the_score(self):
         source = (
             "import unittest\n\n"
