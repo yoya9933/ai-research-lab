@@ -35,3 +35,11 @@ standard-library `shutil.ignore_patterns` and assert the temporary copy
 contains no inherited caches **before** import. See
 [experiment 012](../experiments/012-boltons-rotation-cache-failure.md) for
 the observed CI failure; hash-verified upstream files remain unchanged.
+
+## Report integrity
+
+The report comparator checks that each recorded pass/fail flag agrees with
+its reported actual value, expected value, and error status, in addition to
+matching case identities and tallying fixed/regressed cases. This catches
+internally inconsistent JSON records, **not** falsified matching values,
+unauthenticated reports, contamination, or a misleading test oracle.

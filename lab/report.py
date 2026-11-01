@@ -31,7 +31,15 @@ def compare(baseline, candidate):
                 or not item["task"]
                 or not isinstance(item.get("args"), (tuple, list))
                 or "expected" not in item
+                or "actual" not in item
+                or "error" not in item
                 or type(item.get("passed")) is not bool
+                or (item["error"] is not None and not isinstance(item["error"], str))
+                or item["passed"] != (
+                    item["error"] is None
+                    and type(item["actual"]) is type(item["expected"])
+                    and item["actual"] == item["expected"]
+                )
                 for item in cases
             )
             or type(report.get("total")) is not int
