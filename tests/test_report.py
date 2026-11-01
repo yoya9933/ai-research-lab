@@ -66,6 +66,7 @@ class CompareTests(unittest.TestCase):
                 )
                 self.assertEqual(case["expected"], replacement)
                 case["expected"] = replacement
+                case["actual"] = replacement
                 with self.assertRaisesRegex(ValueError, "differs"):
                     compare(self.original, changed)
 
@@ -87,9 +88,43 @@ class CompareTests(unittest.TestCase):
         changed = copy.deepcopy(self.candidate)
         good = next(c for c in changed["cases"] if c["task"] == "is_prime" and c["passed"])
         good["passed"] = False
+        good["actual"] = "simulated regression"
         changed["passed"] -= 1
         result = compare(self.original, changed)
         self.assertEqual((result["fixed"], result["regressed"], result["delta"]), (5, 1, 4))
+
+    def test_reject_forged_success_with_corrected_total(self):
+        changed = copy.deepcopy(self.original)
+        failing = next(case for case in changed["cases"] if not case["passed"])
+        self.assertNotEqual(failing["actual"], failing["expected"])
+        failing["passed"] = True
+        changed["passed"] += 1
+        with self.assertRaisesRegex(ValueError, "Invalid"):
+            compare(changed, self.candidate)
+
+    def test_reject_forged_failure_with_corrected_total(self):
+        changed = copy.deepcopy(self.candidate)
+        passing = next(case for case in changed["cases"] if case["passed"])
+        passing["passed"] = False
+        changed["passed"] -= 1
+        with self.assertRaisesRegex(ValueError, "Invalid"):
+            compare(self.original, changed)
+
+    def test_reject_success_with_recorded_error(self):
+        changed = copy.deepcopy(self.candidate)
+        passing = next(case for case in changed["cases"] if case["passed"])
+        passing["error"] = "RuntimeError: hidden failure"
+        with self.assertRaisesRegex(ValueError, "Invalid"):
+            compare(self.original, changed)
+
+    def test_reject_missing_observation_fields(self):
+        for field in ("actual", "error"):
+            with self.subTest(field=field):
+                changed = copy.deepcopy(self.candidate)
+                del changed["cases"][0][field]
+                with self.assertRaisesRegex(ValueError, "Invalid"):
+                    compare(self.original, changed)
+
 
 
 if __name__ == "__main__":
