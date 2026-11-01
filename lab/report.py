@@ -5,6 +5,21 @@ import json
 from pathlib import Path
 
 
+def same_value(actual, expected):
+    """Compare nested outcomes without Python's bool/int numeric coercion."""
+    if type(actual) is not type(expected):
+        return False
+    if isinstance(expected, (list, tuple)):
+        return len(actual) == len(expected) and all(
+            same_value(a, b) for a, b in zip(actual, expected)
+        )
+    if isinstance(expected, dict):
+        return actual.keys() == expected.keys() and all(
+            same_value(actual[key], expected[key]) for key in expected
+        )
+    return actual == expected
+
+
 def _case_identity(item):
     """Canonical JSON identity preserves bool/int/float differences in cases."""
     try:
@@ -37,8 +52,7 @@ def compare(baseline, candidate):
                 or (item["error"] is not None and not isinstance(item["error"], str))
                 or item["passed"] != (
                     item["error"] is None
-                    and type(item["actual"]) is type(item["expected"])
-                    and item["actual"] == item["expected"]
+                    and same_value(item["actual"], item["expected"])
                 )
                 for item in cases
             )

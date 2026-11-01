@@ -38,6 +38,9 @@ the observed CI failure; hash-verified upstream files remain unchanged.
 
 ## Report integrity
 
+The evaluator and report comparator check actual versus expected recursively,
+including nested lists and dictionaries. A boolean is not interchangeable with
+an integer even inside a collection (e.g. `[False]` is not `[0]`).
 The report comparator checks that each recorded pass/fail flag agrees with
 its reported actual value, expected value, and error status, in addition to
 matching case identities, rejecting duplicate observations, and tallying
