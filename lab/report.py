@@ -101,15 +101,25 @@ def compare(baseline, candidate):
         raise ValueError("Case order, input or expected answer differs")
 
     changes, changed_failures = [], []
+    by_task = {}
     for before, after in zip(baseline["cases"], candidate["cases"]):
+        counts = by_task.setdefault(before["task"], {
+            "total": 0, "baseline": 0, "candidate": 0,
+            "fixed": 0, "regressed": 0, "changed_failures": 0,
+        })
+        counts["total"] += 1
+        counts["baseline"] += int(before["passed"])
+        counts["candidate"] += int(after["passed"])
         if before["passed"] != after["passed"]:
             change = "fixed" if after["passed"] else "regressed"
+            counts[change] += 1
             target = changes
         elif not before["passed"] and (
             not same_value(before["actual"], after["actual"])
             or before["error"] != after["error"]
         ):
             change = "still_failing_changed"
+            counts["changed_failures"] += 1
             target = changed_failures
         else:
             continue
@@ -128,6 +138,7 @@ def compare(baseline, candidate):
         "regressed": sum(item["change"] == "regressed" for item in changes),
         "changes": changes,
         "changed_failures": changed_failures,
+        "by_task": by_task,
         "outcome_counts": {
             "baseline": _outcome_counts(baseline),
             "candidate": _outcome_counts(candidate),
