@@ -36,7 +36,7 @@ The [first recorded repair](experiments/001-debugging.md) is explicitly **unblin
 
 This lab can measure correctness on a fixed test suite and record reproducible repair attempts. It **cannot control or measure ChatGPT's internal reasoning tokens**, automatically invoke a chat model from GitHub Actions, or operate unattended. No accuracy claims should be made from the included reference code alone.
 
-Read the [experiment protocol](docs/PROTOCOL.md), [roadmap](docs/ROADMAP.md), and [contributor rules](AGENTS.md).
+Read the [research goal and success gates](docs/RESEARCH_GOAL.md), [versioned strategy memory](docs/STRATEGY_MEMORY.md), [experiment protocol](docs/PROTOCOL.md), [roadmap](docs/ROADMAP.md), and [contributor rules](AGENTS.md).
 
 For third-party defects, see the [real-world evidence ledger](docs/REAL_WORLD_CASES.md)
 for pinned sources, upstream acceptance status, exact local test evidence,
