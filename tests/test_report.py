@@ -103,6 +103,75 @@ class CompareTests(unittest.TestCase):
             ))
             self.assertEqual(len(summary["changes"]), 5)
 
+    def test_optional_cli_regression_gate_preserves_report_and_failed_status(self):
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+
+        changed = copy.deepcopy(self.candidate)
+        control = next(
+            item for item in changed["cases"]
+            if item["passed"] and any(
+                original["task"] == item["task"]
+                and original["args"] == item["args"]
+                and original["passed"] for original in self.original["cases"]
+            )
+        )
+        control["actual"] = "regression observed"
+        control["passed"] = False
+        changed["passed"] -= 1
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            before = root / "before.json"
+            after = root / "after.json"
+            output = root / "audit.json"
+            before.write_text(json.dumps(self.original), encoding="utf-8")
+            after.write_text(json.dumps(changed), encoding="utf-8")
+            args = [
+                sys.executable, "-m", "lab.report",
+                str(before), str(after), "--output", str(output),
+            ]
+            default = subprocess.run(
+                args, capture_output=True, text=True, check=False
+            )
+            self.assertEqual(default.returncode, 0, default.stderr)
+            gate = subprocess.run(
+                args + ["--fail-on-regression"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(gate.returncode, 1, gate.stderr)
+            self.assertIn("fixed=5, regressed=1", gate.stdout)
+            audit = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(audit["regressed"], 1)
+            self.assertEqual(audit["fixed"], 5)
+            self.assertEqual(
+                [c["candidate_actual"] for c in audit["changes"]
+                 if c["change"] == "regressed"],
+                ["regression observed"],
+            )
+
+    def test_optional_regression_gate_allows_zero_regressions(self):
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            before, after = root / "before.json", root / "after.json"
+            before.write_text(json.dumps(self.original), encoding="utf-8")
+            after.write_text(json.dumps(self.candidate), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "-m", "lab.report", str(before), str(after),
+                 "--fail-on-regression"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("fixed=5, regressed=0", result.stdout)
+
     def test_invalid_comparison_never_writes_output(self):
         import json
         import subprocess

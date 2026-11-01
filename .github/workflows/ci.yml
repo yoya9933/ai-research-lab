@@ -31,18 +31,18 @@ jobs:
         run: |
           python -m lab evaluate --module lab.buggy --output results/baseline.json
           python -m lab evaluate --module lab.attempt_001 --output results/attempt.json
-          python -m lab.report results/baseline.json results/attempt.json
+          python -m lab.report results/baseline.json results/attempt.json --fail-on-regression
       - name: Check pinned external starter baseline
         run: python -m benchmarks.exercism.runner starter --output results/exercism-starter.json
       - name: Verify external exercise completion and compare to starter
         run: |
           python -m benchmarks.exercism.runner attempt_001 --output results/exercism-attempt.json --require-all-pass
-          python -m lab.report results/exercism-starter.json results/exercism-attempt.json
+          python -m lab.report results/exercism-starter.json results/exercism-attempt.json --fail-on-regression
       - name: Score post-freeze external tests
         run: |
           python -m benchmarks.exercism.runner starter_002 --output results/starter_002.json
           python -m benchmarks.exercism.runner attempt_002 --output results/attempt_002.json
-          python -m lab.report results/starter_002.json results/attempt_002.json
+          python -m lab.report results/starter_002.json results/attempt_002.json --fail-on-regression
       - name: Reproduce pinned upstream humanize issue 30
         run: python -m benchmarks.bugs.humanize_30.reproduce
       - name: Verify historical issue candidate patch

@@ -54,7 +54,12 @@ matching case identities, rejecting duplicate observations, and tallying
 fixed/regressed cases. With `python -m lab.report BEFORE AFTER --output
 results/comparison.json`, it also emits a **case-level change audit** with
 both observed values/errors for every fix and regression. Output is written
-only after the existing same-suite validation succeeds. This supports
+only after the existing same-suite validation succeeds. When
+`--fail-on-regression` is also given, **any** regressed case makes
+the CLI exit with status 1 **after** it has written valid audit evidence.
+Without that flag the command remains informational. The built-in
+CI comparisons use this optional gate on all three known no-regression
+lab/Exercism comparisons. This supports
 reports in the lab/Exercism schema, **not** the heterogeneous third-party
 source-replay JSON dictionaries. This catches
 internally inconsistent JSON records, **not** falsified matching values,
