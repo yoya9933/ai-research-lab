@@ -55,6 +55,13 @@ fixed/regressed cases. This catches
 internally inconsistent JSON records, **not** falsified matching values,
 unauthenticated reports, contamination, or a misleading test oracle.
 
+The evaluator records non-JSON-stable return values (for example a tuple
+instead of a required list) as failed outcomes with a type diagnostic and
+printable representation, rather than allowing JSON coercion to turn a failure
+into a superficially equal result during report comparison. The current suite's
+expected values are JSON-stable; this does not make arbitrary Python objects
+safe to serialize or authenticate JSON reports.
+
 ## Frozen candidate source integrity
 
 `tests/test_frozen_candidate_sources.py` checks Git blob hashes of the

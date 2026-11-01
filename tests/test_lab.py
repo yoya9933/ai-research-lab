@@ -9,6 +9,7 @@ import json
 from lab import buggy, solutions
 from lab.__main__ import evaluate
 from lab.cases import CASES
+from lab.report import compare
 
 
 class EvaluatorTests(unittest.TestCase):
@@ -36,6 +37,16 @@ class EvaluatorTests(unittest.TestCase):
         module = SimpleNamespace(nested=lambda: {False: "value"})
         report = evaluate(module, sample)
         self.assertEqual((report["passed"], report["total"]), (0, 1))
+
+    def test_tuple_mismatch_remains_failure_after_json_serialization(self):
+        sample = {"unique": [(([],), [])]}
+        module = SimpleNamespace(unique=lambda values: ())
+        report = evaluate(module, sample)
+        report["suite"] = "synthetic"
+        serialized = json.loads(json.dumps(report))
+        self.assertEqual((serialized["passed"], serialized["total"]), (0, 1))
+        self.assertIn("Non-JSON-stable output: tuple", serialized["cases"][0]["error"])
+        self.assertEqual(compare(serialized, serialized)["baseline"], 0)
 
     def test_missing_function_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "Missing callable"):

@@ -21,6 +21,17 @@ def evaluate(module, cases=CASES):
                 actual = function(*deepcopy(args))
                 passed = same_value(actual, expected)
                 error = None
+                # Preserve failed type distinctions that JSON would erase.
+                try:
+                    json_stable = same_value(
+                        actual, json.loads(json.dumps(actual, allow_nan=False))
+                    )
+                except (TypeError, ValueError):
+                    json_stable = False
+                if not json_stable:
+                    error = f"Non-JSON-stable output: {type(actual).__name__}"
+                    actual = repr(actual)
+                    passed = False
             except Exception as exc:
                 actual, passed, error = None, False, f"{type(exc).__name__}: {exc}"
             results.append({"task": name, "args": args, "expected": expected,
