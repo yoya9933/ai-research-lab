@@ -41,3 +41,12 @@ The two original assertions should fail on historical baseline and
 pass after the frozen candidate. This tests only current-conversation
 exposure chronology; the public repair was already visible and
 **no blind AI ability measurement is claimed**.
+
+## Investigator-written post-freeze input matrix
+
+Experiment 025 introduces 144 deterministic literal-word observations,
+including 128 duplicate word lists and 16 singleton controls, both plain
+and anchored. It checks no change in literal-language matching, and verifies
+that the frozen candidate canonicalizes duplicate inputs. Run
+python -m unittest tests.test_pygments_3190_properties -v.
+These tests are explicitly nonblind and do not claim an AI improvement.

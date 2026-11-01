@@ -69,3 +69,5 @@ jobs:
         run: python -m unittest tests.test_pygments_3190_candidate -v
       - name: Replay original Pygments regression tests after frozen candidate
         run: python -m unittest tests.test_pygments_3190_upstream -v
+      - name: Verify 144 post-freeze Pygments literal-language observations
+        run: python -m unittest tests.test_pygments_3190_properties -v
