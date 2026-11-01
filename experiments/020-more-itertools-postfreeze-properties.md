@@ -46,3 +46,20 @@ checks bounded behavior for a standalone function excerpt only;
 it does not prove correct behavior for arbitrary iterables, non-integer
 size values, other Python versions, or the full third-party library.
 No model APIs, extra package installs, external writes, or blind claims.
+
+## Targeted, non-overlapping edge checks after PR #45
+
+[PR #45](https://github.com/yoya9933/ai-research-lab/pull/45)
+merged a 372-pair property matrix for sizes -3..8 and lengths 0..30.
+A concurrent [PR #46](https://github.com/yoya9933/ai-research-lab/pull/46)
+covered overlapping files and was CI-green but deliberately **closed
+without merge** to avoid duplicate test modules.
+
+The follow-on `tests/test_more_itertools_1342_guard_boundaries.py` tests
+**18 previously untested buffer-threshold inputs**: sizes 9..14 and
+lengths one below, equal to, and one above `(n-1)*(n-2)`. It also
+checks **two poisoned iterables** whose `__iter__` raises: the original
+source consults them, while the frozen candidate must handle zero
+and negative sizes before calling them. Both versions use the same
+inputs, and no candidate source changes. This is not blind or a
+representative performance benchmark.
