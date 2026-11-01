@@ -11,6 +11,7 @@ from .report import same_value
 
 
 def evaluate(module, cases=CASES):
+    cases = deepcopy(cases)
     results = []
     for name, samples in cases.items():
         function = getattr(module, name, None)
