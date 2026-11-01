@@ -71,8 +71,14 @@ def evaluate(candidate):
     if not directory.is_dir():
         raise FileNotFoundError(directory)
     test_directory = ROOT / test_dir
-    module_names = {path.stem for path in directory.glob("*.py")}
-    module_names.update(path.stem for path in test_directory.glob("*_test.py"))
+    module_names = set()
+    for root in (directory, test_directory):
+        for path in root.rglob("*.py"):
+            parts = path.relative_to(root).with_suffix("").parts
+            if parts[-1] == "__init__":
+                parts = parts[:-1]
+            if parts:
+                module_names.add(".".join(parts))
     previous_modules = {
         name: sys.modules.pop(name) for name in module_names if name in sys.modules
     }
