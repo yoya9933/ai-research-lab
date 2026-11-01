@@ -77,15 +77,24 @@ def compare(baseline, candidate):
     if before_ids != after_ids:
         raise ValueError("Case order, input or expected answer differs")
 
-    pairs = zip(baseline["cases"], candidate["cases"])
-    fixed = sum(not a["passed"] and b["passed"] for a, b in pairs)
-    pairs = zip(baseline["cases"], candidate["cases"])
-    regressed = sum(a["passed"] and not b["passed"] for a, b in pairs)
+    changes = [
+        {
+            "change": "fixed" if after["passed"] else "regressed",
+            "task": before["task"], "args": before["args"],
+            "expected": before["expected"],
+            "baseline_actual": before["actual"], "candidate_actual": after["actual"],
+            "baseline_error": before["error"], "candidate_error": after["error"],
+        }
+        for before, after in zip(baseline["cases"], candidate["cases"])
+        if before["passed"] != after["passed"]
+    ]
     return {
         "suite": suite, "total": baseline["total"],
         "baseline": baseline["passed"], "candidate": candidate["passed"],
         "delta": candidate["passed"] - baseline["passed"],
-        "fixed": fixed, "regressed": regressed
+        "fixed": sum(item["change"] == "fixed" for item in changes),
+        "regressed": sum(item["change"] == "regressed" for item in changes),
+        "changes": changes,
     }
 
 
@@ -93,10 +102,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("baseline", type=Path)
     parser.add_argument("candidate", type=Path)
+    parser.add_argument("--output", type=Path,
+                        help="Save validated case-level comparison as JSON")
     args = parser.parse_args()
     baseline = json.loads(args.baseline.read_text(encoding="utf-8"))
     candidate = json.loads(args.candidate.read_text(encoding="utf-8"))
     result = compare(baseline, candidate)
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(
+            json.dumps(result, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
     print(
         f"{result['suite']}: {result['baseline']}/{result['total']} -> "
         f"{result['candidate']}/{result['total']} (delta {result['delta']:+d}); "

@@ -28,6 +28,105 @@ class CompareTests(unittest.TestCase):
         result = compare(before, after)
         self.assertEqual((result["baseline"], result["candidate"], result["delta"]), (8, 11, 3))
 
+    def test_changes_name_exact_fixes_and_keep_both_outcomes(self):
+        compared = compare(self.original, self.candidate)
+        self.assertEqual(len(compared["changes"]), 5)
+        self.assertTrue(all(c["change"] == "fixed" for c in compared["changes"]))
+        for item in compared["changes"]:
+            with self.subTest(task=item["task"], args=item["args"]):
+                original = next(
+                    case for case in self.original["cases"]
+                    if case["task"] == item["task"]
+                    and case["args"] == item["args"]
+                    and case["expected"] == item["expected"]
+                )
+                candidate = next(
+                    case for case in self.candidate["cases"]
+                    if case["task"] == item["task"]
+                    and case["args"] == item["args"]
+                    and case["expected"] == item["expected"]
+                )
+                self.assertFalse(original["passed"])
+                self.assertTrue(candidate["passed"])
+                self.assertEqual(item["baseline_actual"], original["actual"])
+                self.assertEqual(item["candidate_actual"], candidate["actual"])
+                self.assertEqual(item["baseline_error"], original["error"])
+                self.assertEqual(item["candidate_error"], candidate["error"])
+        self.assertEqual(compare(self.original, self.original)["changes"], [])
+
+    def test_regressed_cases_are_exposed_with_original_values(self):
+        changed = copy.deepcopy(self.candidate)
+        control = next(
+            item for item in changed["cases"]
+            if item["passed"] and any(
+                prior["task"] == item["task"]
+                and prior["args"] == item["args"]
+                and prior["passed"] for prior in self.original["cases"]
+            )
+        )
+        control["actual"] = "broken after patch"
+        control["passed"] = False
+        changed["passed"] -= 1
+        result = compare(self.original, changed)
+        self.assertEqual((result["fixed"], result["regressed"]), (5, 1))
+        regressions = [item for item in result["changes"] if item["change"] == "regressed"]
+        self.assertEqual(len(regressions), 1)
+        self.assertEqual(regressions[0]["task"], control["task"])
+        self.assertEqual(regressions[0]["candidate_actual"], "broken after patch")
+        self.assertEqual(len(result["changes"]), 6)
+
+    def test_json_cli_writes_comparison_with_case_level_changes(self):
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder)
+            baseline = path / "baseline.json"
+            candidate = path / "candidate.json"
+            output = path / "results" / "comparison.json"
+            baseline.write_text(json.dumps(self.original), encoding="utf-8")
+            candidate.write_text(json.dumps(self.candidate), encoding="utf-8")
+            run = subprocess.run(
+                [sys.executable, "-m", "lab.report",
+                 str(baseline), str(candidate), "--output", str(output)],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(run.returncode, 0, run.stderr)
+            self.assertIn("fixed=5, regressed=0", run.stdout)
+            summary = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(summary, compare(
+                json.loads(baseline.read_text(encoding="utf-8")),
+                json.loads(candidate.read_text(encoding="utf-8")),
+            ))
+            self.assertEqual(len(summary["changes"]), 5)
+
+    def test_invalid_comparison_never_writes_output(self):
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder)
+            baseline = path / "baseline.json"
+            candidate = path / "candidate.json"
+            output = path / "comparison.json"
+            baseline.write_text(json.dumps(self.original), encoding="utf-8")
+            invalid = copy.deepcopy(self.candidate)
+            invalid["passed"] = 999
+            candidate.write_text(json.dumps(invalid), encoding="utf-8")
+            run = subprocess.run(
+                [sys.executable, "-m", "lab.report",
+                 str(baseline), str(candidate), "--output", str(output)],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertNotEqual(run.returncode, 0)
+            self.assertFalse(output.exists())
+
     def test_reject_different_suites(self):
         self.candidate["suite"] = "followup"
         with self.assertRaisesRegex(ValueError, "different"):
