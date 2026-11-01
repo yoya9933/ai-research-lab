@@ -207,6 +207,53 @@ class TrackIsolationTests(unittest.TestCase):
                     runner.evaluate("synthetic")
             self.assertEqual(sys.path, original_path)
 
+    def test_fixture_errors_are_rejected_not_attributed_to_last_test(self):
+        fixtures = {
+            "tearDownModule": (
+                "def tearDownModule():\n"
+                "    raise RuntimeError('module cleanup failed')\n"
+            ),
+            "tearDownClass": (
+                "def tearDownClass():\n"
+                "    raise RuntimeError('class cleanup failed')\n"
+            ),
+            "setUpClass": (
+                "def setUpClass():\n"
+                "    raise RuntimeError('class initialization failed')\n"
+            ),
+        }
+        for fixture, body in fixtures.items():
+            with self.subTest(fixture=fixture), tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                (root / "candidate").mkdir()
+                test_dir = root / "tests"
+                test_dir.mkdir()
+                normal = (
+                    "import unittest\n\n"
+                    "class SyntheticTest(unittest.TestCase):\n"
+                    "    def test_case(self):\n"
+                    "        self.assertTrue(True)\n"
+                )
+                if fixture == "tearDownModule":
+                    source = normal + "\n" + body
+                else:
+                    # Keep a single bona fide method; add a class fixture.
+                    source = normal + "\n" + "".join(
+                        "    " + line + "\n" for line in body.splitlines()
+                    )
+                (test_dir / "fixture_test.py").write_text(source, encoding="utf-8")
+                original_path = sys.path[:]
+                with mock.patch.object(runner, "ROOT", root), mock.patch.object(
+                    runner, "TRACKS", {"synthetic": ("candidate", "tests", 1)}
+                ):
+                    with self.assertRaisesRegex(
+                        RuntimeError, "Unscored upstream fixture errors"
+                    ) as caught:
+                        runner.evaluate("synthetic")
+                self.assertIn(fixture, str(caught.exception))
+                self.assertIn("failed", str(caught.exception))
+                self.assertEqual(sys.path, original_path)
+
     def test_repeated_and_reversed_track_order(self):
         original_path = sys.path[:]
         tracks = (

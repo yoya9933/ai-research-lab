@@ -38,6 +38,9 @@ class RecordingResult(unittest.TestResult):
 
     def addError(self, test, err):
         super().addError(test, err)
+        # setUpClass/tearDownClass and module fixtures do not call startTest.
+        if not self.cases or self.cases[-1]["task"] != test.id():
+            return
         case = self.cases[-1]
         case["actual"] = "error"
         case["error"] = "\n".join(filter(
@@ -82,9 +85,18 @@ def evaluate(candidate):
             )
         result = RecordingResult()
         suite.run(result)
+        identities = [case["task"] for case in result.cases]
+        unscored = [
+            (test.id(), detail) for test, detail in result.errors
+            if test.id() not in identities
+        ]
+        if unscored:
+            raise RuntimeError(
+                "Unscored upstream fixture errors:\n"
+                + "\n".join(f"{name}:\n{detail}" for name, detail in unscored)
+            )
         if result.testsRun != expected_tests:
             raise RuntimeError(f"Expected {expected_tests} upstream tests; got {result.testsRun}")
-        identities = [case["task"] for case in result.cases]
         if len(identities) != result.testsRun or len(set(identities)) != result.testsRun:
             raise RuntimeError("Missing or duplicate upstream test identities")
         if result.skipped or result.expectedFailures or result.unexpectedSuccesses:
