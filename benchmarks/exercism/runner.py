@@ -50,6 +50,7 @@ class RecordingResult(unittest.TestResult):
     def addSubTest(self, test, subtest, err):
         super().addSubTest(test, subtest, err)
         if err is not None:
+            self.scored_subtest_errors.add(subtest.id())
             case = self.cases[-1]
             kind = "failure" if issubclass(err[0], test.failureException) else "error"
             case["actual"] = "error" if "error" in (case["actual"], kind) else "failure"
@@ -59,6 +60,7 @@ class RecordingResult(unittest.TestResult):
     def __init__(self):
         super().__init__()
         self.cases = []
+        self.scored_subtest_errors = set()
 
 
 def evaluate(candidate):
@@ -89,6 +91,7 @@ def evaluate(candidate):
         unscored = [
             (test.id(), detail) for test, detail in result.errors
             if test.id() not in identities
+            and test.id() not in result.scored_subtest_errors
         ]
         if unscored:
             raise RuntimeError(
