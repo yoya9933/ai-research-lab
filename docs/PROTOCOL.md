@@ -35,8 +35,12 @@ external-source allowlist.
 The Exercism runner supports sequential grading within one trusted Python
 process. It temporarily removes potentially cached candidate/test imports,
 then restores the prior `sys.path` and module entries after each track,
-including on failures. This prevents a later named candidate from receiving
-results from an earlier track's cached modules; it is **not** a security sandbox.
+including on failures. This includes nested candidate/test Python packages
+(`pkg/__init__.py` and `pkg/mod.py`), not just top-level modules:
+each track's package and its submodules are removed/restored from
+`sys.modules` to prevent the next named candidate from receiving
+another track's cached results. It is **not** a security sandbox;
+modules imported through other global names can still have side effects.
 
 Skipped, expected-failure and unexpected-success unittest outcomes are **not
 valid scored observations** in this external benchmark. The runner refuses

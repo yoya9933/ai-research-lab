@@ -254,6 +254,46 @@ class TrackIsolationTests(unittest.TestCase):
                 self.assertIn("failed", str(caught.exception))
                 self.assertEqual(sys.path, original_path)
 
+    def test_nested_candidate_imports_do_not_contaminate_next_track(self):
+        package = "research_lab_nested_candidate_pkg"
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            tracks = {}
+            for label in ("first", "second"):
+                directory = root / f"candidate_{label}"
+                helper = directory / package
+                helper.mkdir(parents=True)
+                (helper / "__init__.py").write_text("", encoding="utf-8")
+                (helper / "value.py").write_text(
+                    f"MARKER = {label!r}\n", encoding="utf-8"
+                )
+                test_dir = root / f"tests_{label}"
+                test_dir.mkdir()
+                (test_dir / "isolation_test.py").write_text(
+                    "import unittest\n"
+                    f"from {package}.value import MARKER\n"
+                    "class IsolationTest(unittest.TestCase):\n"
+                    "    def test_expected_candidate(self):\n"
+                    f"        self.assertEqual(MARKER, {label!r})\n",
+                    encoding="utf-8",
+                )
+                tracks[label] = (directory.name, test_dir.name, 1)
+            prior = sys.path[:]
+            self.assertNotIn(package, sys.modules)
+            self.assertNotIn(f"{package}.value", sys.modules)
+            with mock.patch.object(runner, "ROOT", root), mock.patch.object(
+                runner, "TRACKS", tracks
+            ):
+                for label in ("first", "second", "first", "second"):
+                    with self.subTest(candidate=label):
+                        report = runner.evaluate(label)
+                        self.assertEqual(
+                            (report["passed"], report["total"]), (1, 1)
+                        )
+                        self.assertNotIn(package, sys.modules)
+                        self.assertNotIn(f"{package}.value", sys.modules)
+                        self.assertEqual(sys.path, prior)
+
     def test_repeated_and_reversed_track_order(self):
         original_path = sys.path[:]
         tracks = (
