@@ -78,7 +78,9 @@ def evaluate(candidate):
             if parts[-1] == "__init__":
                 parts = parts[:-1]
             if parts:
-                module_names.add(".".join(parts))
+                # Include namespace-package ancestors without __init__.py.
+                for depth in range(1, len(parts) + 1):
+                    module_names.add(".".join(parts[:depth]))
     previous_modules = {
         name: sys.modules.pop(name) for name in module_names if name in sys.modules
     }

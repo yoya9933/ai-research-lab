@@ -280,6 +280,42 @@ class TrackIsolationTests(unittest.TestCase):
                 self.assertIn("failed", str(caught.exception))
                 self.assertEqual(sys.path, original_path)
 
+    def test_namespace_package_imports_do_not_leak_between_tracks(self):
+        namespace = "research_lab_namespace_candidate_pkg"
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            tracks = {}
+            for label in ("first", "second"):
+                candidate = root / f"candidate_{label}"
+                package = candidate / namespace
+                package.mkdir(parents=True)  # No __init__.py: implicit namespace.
+                (package / "value.py").write_text(
+                    f"MARKER = {label!r}\n", encoding="utf-8"
+                )
+                test_dir = root / f"tests_{label}"
+                test_dir.mkdir()
+                (test_dir / "namespace_test.py").write_text(
+                    "import unittest\n"
+                    f"from {namespace}.value import MARKER\n"
+                    "class NamespaceTest(unittest.TestCase):\n"
+                    "    def test_marker(self):\n"
+                    f"        self.assertEqual(MARKER, {label!r})\n",
+                    encoding="utf-8",
+                )
+                tracks[label] = (candidate.name, test_dir.name, 1)
+            previous_path = sys.path[:]
+            self.assertNotIn(namespace, sys.modules)
+            with mock.patch.object(runner, "ROOT", root), mock.patch.object(
+                runner, "TRACKS", tracks
+            ):
+                for label in ("first", "second", "first"):
+                    with self.subTest(candidate=label):
+                        report = runner.evaluate(label)
+                        self.assertEqual((report["passed"], report["total"]), (1, 1))
+                        self.assertNotIn(namespace, sys.modules)
+                        self.assertNotIn(f"{namespace}.value", sys.modules)
+                        self.assertEqual(sys.path, previous_path)
+
     def test_nested_candidate_imports_do_not_contaminate_next_track(self):
         package = "research_lab_nested_candidate_pkg"
         with tempfile.TemporaryDirectory() as folder:
