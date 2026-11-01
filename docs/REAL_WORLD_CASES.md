@@ -17,6 +17,18 @@ AI-performance leaderboard.
 | [tokenize-rt #33](https://github.com/asottile/tokenize-rt/issues/33): no-EOL token has wrong UTF-8 byte offset | `7f89433be049d73e189a903485a93bdf3e56f1a0`, single MIT module | [Baseline/repair](../benchmarks/bugs/tokenize_rt_33/README.md): 3 corrected byte offsets, 3 unchanged input controls | Issue closed with subsequent fix commit; see case README |
 | [more-itertools PR #1342](https://github.com/more-itertools/more-itertools/pull/1342): zero/negative chunk sizes lack validation | `4aeb4338ae1407d8da9723e86da99efeb446f719`, standalone MIT **function excerpt**, not full package | [Baseline/repair](../benchmarks/bugs/more_itertools_1342/README.md): 4 changed observations, 6 coarse controls; [post-freeze 372-input property matrix](../experiments/020-more-itertools-postfreeze-properties.md) | **Upstream PR merged** on 2026-10-30 |
 
+After the 372-pair matrix was frozen, [PR #47](https://github.com/yoya9933/ai-research-lab/pull/47)
+added **18 additional positive buffer-threshold inputs** (sizes 9–14)
+and **two poisoned-iterable boundary inputs** that deliberately raise in
+`__iter__`. It confirmed the first candidate retains these positive
+outputs and validates nonpositive sizes before touching poisoned sources.
+[PR CI](https://github.com/yoya9933/ai-research-lab/actions/runs/41285886346)
+and [main CI](https://github.com/yoya9933/ai-research-lab/actions/runs/41285911391)
+completed **success**. A separate, overlapping [PR #46](https://github.com/yoya9933/ai-research-lab/pull/46)
+was intentionally **closed without merge** rather than double-counting
+its proposed test matrix; that PR's CI success does not make those unmerged
+tests part of the corpus.
+
 This is **seven locally replayed root-cause families across four external
 projects** when #30 and #20 are grouped and the **unmerged #486 claim is
 clearly marked provisional**. The observations within one family are correlated:
