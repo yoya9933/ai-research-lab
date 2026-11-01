@@ -263,6 +263,35 @@ class CompareTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "different"):
             compare(self.original, self.candidate)
 
+    def test_reject_json_key_coercion_in_case_identity(self):
+        for change_field in ("args", "expected"):
+            with self.subTest(field=change_field):
+                before = {
+                    "suite": "typed-keys", "passed": 1, "total": 1,
+                    "cases": [{
+                        "task": "typed-map",
+                        "args": [{"1": "value"}],
+                        "expected": {"1": "value"}, "actual": {"1": "value"},
+                        "passed": True, "error": None,
+                    }],
+                }
+                after = copy.deepcopy(before)
+                after_case = after["cases"][0]
+                if change_field == "args":
+                    after_case["args"] = [{1: "value"}]
+                else:
+                    after_case["expected"] = {1: "value"}
+                    after_case["actual"] = {1: "value"}
+                # JSON coerces integer mapping keys to strings, hiding
+                # this mismatch in the canonical string alone.
+                import json
+                self.assertEqual(
+                    json.dumps(before["cases"][0][change_field]),
+                    json.dumps(after_case[change_field]),
+                )
+                with self.assertRaisesRegex(ValueError, "differs"):
+                    compare(before, after)
+
     def test_reject_different_case_data(self):
         changed = copy.deepcopy(self.candidate)
         changed["cases"][0]["args"] = [999, 0, 0]

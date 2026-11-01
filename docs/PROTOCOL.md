@@ -98,7 +98,10 @@ key (e.g. `{False: "x"}` is not `{0: "x"}`).
 The report comparator checks that each recorded pass/fail flag agrees with
 its reported actual value, expected value, and error status, in addition to
 matching case identities, rejecting duplicate observations, and tallying
-fixed/regressed cases. With `python -m lab.report BEFORE AFTER --output
+fixed/regressed cases. Beyond the JSON-canonical ID, it compares nested
+input arguments and expected answers with `same_value` to reject
+numeric-key versus string-key Python mappings that JSON would otherwise
+coerce into identical case IDs. With `python -m lab.report BEFORE AFTER --output
 results/comparison.json`, it also emits a **case-level change audit** with
 both observed values/errors for every fix and regression, plus
 `changed_failures` for inputs that **still fail both versions** but
