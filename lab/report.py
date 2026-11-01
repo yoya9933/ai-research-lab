@@ -77,17 +77,26 @@ def compare(baseline, candidate):
     if before_ids != after_ids:
         raise ValueError("Case order, input or expected answer differs")
 
-    changes = [
-        {
-            "change": "fixed" if after["passed"] else "regressed",
+    changes, changed_failures = [], []
+    for before, after in zip(baseline["cases"], candidate["cases"]):
+        if before["passed"] != after["passed"]:
+            change = "fixed" if after["passed"] else "regressed"
+            target = changes
+        elif not before["passed"] and (
+            not same_value(before["actual"], after["actual"])
+            or before["error"] != after["error"]
+        ):
+            change = "still_failing_changed"
+            target = changed_failures
+        else:
+            continue
+        target.append({
+            "change": change,
             "task": before["task"], "args": before["args"],
             "expected": before["expected"],
             "baseline_actual": before["actual"], "candidate_actual": after["actual"],
             "baseline_error": before["error"], "candidate_error": after["error"],
-        }
-        for before, after in zip(baseline["cases"], candidate["cases"])
-        if before["passed"] != after["passed"]
-    ]
+        })
     return {
         "suite": suite, "total": baseline["total"],
         "baseline": baseline["passed"], "candidate": candidate["passed"],
@@ -95,6 +104,7 @@ def compare(baseline, candidate):
         "fixed": sum(item["change"] == "fixed" for item in changes),
         "regressed": sum(item["change"] == "regressed" for item in changes),
         "changes": changes,
+        "changed_failures": changed_failures,
     }
 
 
@@ -125,7 +135,8 @@ def main():
     print(
         f"{result['suite']}: {result['baseline']}/{result['total']} -> "
         f"{result['candidate']}/{result['total']} (delta {result['delta']:+d}); "
-        f"fixed={result['fixed']}, regressed={result['regressed']}"
+        f"fixed={result['fixed']}, regressed={result['regressed']}; "
+        f"changed failures={len(result['changed_failures'])}"
     )
     if args.fail_on_regression and result["regressed"]:
         raise SystemExit(1)

@@ -100,7 +100,11 @@ its reported actual value, expected value, and error status, in addition to
 matching case identities, rejecting duplicate observations, and tallying
 fixed/regressed cases. With `python -m lab.report BEFORE AFTER --output
 results/comparison.json`, it also emits a **case-level change audit** with
-both observed values/errors for every fix and regression. Output is written
+both observed values/errors for every fix and regression, plus
+`changed_failures` for inputs that **still fail both versions** but
+produce a different wrong value/exception. Such unresolved changes are
+not counted as fixes or pass-to-fail regressions and are not omitted
+from the saved evidence. Output is written
 only after the existing same-suite validation succeeds. It cannot overwrite
 either original input report, even via a filesystem link: both original JSON
 inputs remain available for independent comparison and later audit. When
