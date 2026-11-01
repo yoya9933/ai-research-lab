@@ -74,7 +74,12 @@ def compare(baseline, candidate):
     after_ids = [_case_identity(item) for item in candidate["cases"]]
     if len(set(before_ids)) != len(before_ids) or len(set(after_ids)) != len(after_ids):
         raise ValueError("Duplicate evaluator case identity")
-    if before_ids != after_ids:
+    if before_ids != after_ids or any(
+        before["task"] != after["task"]
+        or not same_value(before["args"], after["args"])
+        or not same_value(before["expected"], after["expected"])
+        for before, after in zip(baseline["cases"], candidate["cases"])
+    ):
         raise ValueError("Case order, input or expected answer differs")
 
     changes, changed_failures = [], []
