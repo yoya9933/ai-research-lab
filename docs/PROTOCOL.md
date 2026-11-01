@@ -128,7 +128,18 @@ only after the existing same-suite validation succeeds. When saved,
 the comparison JSON includes SHA-256 hashes of the exact baseline and
 candidate input *file bytes*, read once for scoring and hashing. These
 bind a report to input artifacts but are neither signed provenance nor
-proof that the upstream source or scorer was independently controlled. It cannot overwrite
+proof that the upstream source or scorer was independently controlled.
+
+The CI workflow additionally archives the **three exact-suite comparison
+JSON files and their six original input reports** as one GitHub Actions
+`scored-comparisons` artifact. It uses a SHA-pinned official
+`actions/upload-artifact` action, preserves evidence even when the
+regression gate exits nonzero (`if: always()`), limits retention to
+seven days, and lists only these nine known public-test JSON paths.
+Reproducing historical comparisons after artifact expiration requires
+rerunning the same pinned commit and its public tests. This retention
+is a convenience, **not** long-term storage or a guarantee of blind
+grading. It cannot overwrite
 either original input report, even via a filesystem link: both original JSON
 inputs remain available for independent comparison and later audit. When
 `--fail-on-regression` is also given, **any** regressed case makes
