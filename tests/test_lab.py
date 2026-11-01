@@ -31,6 +31,12 @@ class EvaluatorTests(unittest.TestCase):
         self.assertEqual((report["passed"], report["total"]), (0, 1))
         self.assertFalse(report["cases"][0]["passed"])
 
+    def test_dictionary_key_type_is_not_coerced(self):
+        sample = {"nested": [((), {0: "value"})]}
+        module = SimpleNamespace(nested=lambda: {False: "value"})
+        report = evaluate(module, sample)
+        self.assertEqual((report["passed"], report["total"]), (0, 1))
+
     def test_missing_function_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "Missing callable"):
             evaluate(object())

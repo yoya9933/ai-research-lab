@@ -14,8 +14,10 @@ def same_value(actual, expected):
             same_value(a, b) for a, b in zip(actual, expected)
         )
     if isinstance(expected, dict):
-        return actual.keys() == expected.keys() and all(
-            same_value(actual[key], expected[key]) for key in expected
+        return len(actual) == len(expected) and all(
+            any(type(key) is type(expected_key) and key == expected_key
+                and same_value(actual[key], value) for key in actual)
+            for expected_key, value in expected.items()
         )
     return actual == expected
 
