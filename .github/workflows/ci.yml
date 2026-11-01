@@ -67,3 +67,5 @@ jobs:
         run: python -m benchmarks.bugs.pygments_3190.reproduce
       - name: Validate isolated Pygments duplicate-keyword candidate and controls
         run: python -m unittest tests.test_pygments_3190_candidate -v
+      - name: Replay original Pygments regression tests after frozen candidate
+        run: python -m unittest tests.test_pygments_3190_upstream -v
