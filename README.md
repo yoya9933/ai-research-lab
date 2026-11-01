@@ -59,7 +59,8 @@ The optional JSON summary preserves each changed case's task, input,
 expected output and both actual/error outcomes, including **regressions**.
 It rejects different suites, altered inputs/expected values, and
 inconsistent reported totals; invalid comparisons never write the
-requested output. Use `--fail-on-regression` when a downstream CI job must reject a
+requested output. The CLI also refuses an `--output` path that would
+overwrite either input report (including symlink or hard-link aliases). Use `--fail-on-regression` when a downstream CI job must reject a
 candidate that breaks any previously passing case; it exits with status
 1 **after** printing counts and writing any requested JSON evidence.
 Without the flag, the comparison remains informational. The tool

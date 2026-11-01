@@ -172,6 +172,45 @@ class CompareTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn("fixed=5, regressed=0", result.stdout)
 
+    def test_cli_rejects_overwriting_inputs_and_file_aliases(self):
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            baseline = root / "baseline.json"
+            candidate = root / "candidate.json"
+            baseline.write_text(json.dumps(self.original), encoding="utf-8")
+            candidate.write_text(json.dumps(self.candidate), encoding="utf-8")
+            baseline_bytes, candidate_bytes = (
+                baseline.read_bytes(), candidate.read_bytes()
+            )
+            symbolic = root / "baseline-symbolic.json"
+            symbolic.symlink_to(baseline)
+            hardlink = root / "candidate-hardlink.json"
+            hardlink.hardlink_to(candidate)
+
+            for label, output in (
+                ("baseline", baseline),
+                ("candidate", candidate),
+                ("symbolic link", symbolic),
+                ("hard link", hardlink),
+            ):
+                with self.subTest(output=label):
+                    run = subprocess.run(
+                        [sys.executable, "-m", "lab.report",
+                         str(baseline), str(candidate),
+                         "--output", str(output)],
+                        capture_output=True, text=True, check=False,
+                    )
+                    self.assertNotEqual(run.returncode, 0)
+                    self.assertIn("must not overwrite", run.stderr)
+                    self.assertEqual(baseline.read_bytes(), baseline_bytes)
+                    self.assertEqual(candidate.read_bytes(), candidate_bytes)
+
     def test_invalid_comparison_never_writes_output(self):
         import json
         import subprocess

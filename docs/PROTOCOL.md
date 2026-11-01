@@ -62,7 +62,9 @@ matching case identities, rejecting duplicate observations, and tallying
 fixed/regressed cases. With `python -m lab.report BEFORE AFTER --output
 results/comparison.json`, it also emits a **case-level change audit** with
 both observed values/errors for every fix and regression. Output is written
-only after the existing same-suite validation succeeds. When
+only after the existing same-suite validation succeeds. It cannot overwrite
+either original input report, even via a filesystem link: both original JSON
+inputs remain available for independent comparison and later audit. When
 `--fail-on-regression` is also given, **any** regressed case makes
 the CLI exit with status 1 **after** it has written valid audit evidence.
 Without that flag the command remains informational. The built-in

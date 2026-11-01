@@ -110,6 +110,12 @@ def main():
     baseline = json.loads(args.baseline.read_text(encoding="utf-8"))
     candidate = json.loads(args.candidate.read_text(encoding="utf-8"))
     result = compare(baseline, candidate)
+    if args.output and any(
+        args.output.resolve() == path.resolve()
+        or (args.output.exists() and args.output.samefile(path))
+        for path in (args.baseline, args.candidate)
+    ):
+        parser.error("--output must not overwrite an input report")
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(
