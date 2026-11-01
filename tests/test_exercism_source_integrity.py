@@ -6,6 +6,7 @@ The test runs offline, without importing or changing third-party fixtures.
 
 from hashlib import sha1
 from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 
 from benchmarks.exercism.runner import UPSTREAM_SHA
@@ -30,7 +31,30 @@ UPSTREAM_BLOBS = {
 }
 
 
+def fixture_python_files(root):
+    directories = ("starter", "tests", "trial_002/starter", "trial_002/tests")
+    return {
+        str(path.relative_to(root))
+        for directory in directories
+        for path in (root / directory).rglob("*.py")
+    }
+
+
 class ExercismSourceIntegrityTests(unittest.TestCase):
+    def test_external_python_file_inventory_is_exact(self):
+        pinned = {path for path in UPSTREAM_BLOBS if path.endswith(".py")}
+        self.assertEqual(fixture_python_files(ROOT), pinned)
+
+    def test_inventory_notices_unlisted_nested_test_module(self):
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            extra = root / "tests" / "nested" / "unlisted_test.py"
+            extra.parent.mkdir(parents=True)
+            extra.write_text("def test_unlisted(): pass\n", encoding="utf-8")
+            self.assertEqual(
+                fixture_python_files(root), {"tests/nested/unlisted_test.py"}
+            )
+
     def test_all_external_benchmark_source_blobs_are_unchanged(self):
         self.assertEqual(UPSTREAM_SHA, ORIGINAL_COMMIT)
         for name, expected_sha in UPSTREAM_BLOBS.items():

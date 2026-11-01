@@ -24,6 +24,14 @@ In addition to example cases, tests can check program properties with bounded, r
 
 The `benchmarks/exercism` source corpus is MIT-licensed and pinned to a Git SHA. Preserve upstream tests and copyright, and store candidate implementations separately. Comparing the original stubs and candidate shows completion on *public upstream tests*, not genuine real-world bug repair or a blinded ability measurement. Real-world issue reproduction remains an open research goal.
 
+The offline [Exercism source-integrity check](../tests/test_exercism_source_integrity.py)
+verifies both the expected upstream **Git blob bytes** and the **exact
+inventory** of Python files across the two starter and two test-fixture
+trees. An unlisted extra `.py` (including a nested helper) is not
+silently accepted as part of the frozen external suite. Mutable
+candidate implementations remain separate and are not included in this
+external-source allowlist.
+
 The Exercism runner supports sequential grading within one trusted Python
 process. It temporarily removes potentially cached candidate/test imports,
 then restores the prior `sys.path` and module entries after each track,
