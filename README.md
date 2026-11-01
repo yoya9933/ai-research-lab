@@ -65,6 +65,10 @@ unsuccessful debugging evidence. The same JSON also includes
 error) for both versions; these sum to the original case count.
 A `reported_error` can be a unittest assertion failure or a diagnostic
 such as non-JSON output, **not necessarily an uncaught Python exception**.
+The `by_task` section groups total cases, baseline/candidate passes,
+fixes, regressions and changed unresolved failures under each **task
+label**; summed task counts agree with the full report. A task label
+is not automatically an independent defect family or AI trial.
 These are descriptive observations, not independent model trials.
 It rejects different suites, altered inputs/expected values, and
 inconsistent reported totals; invalid comparisons never write the

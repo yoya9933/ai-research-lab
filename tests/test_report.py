@@ -54,6 +54,56 @@ class CompareTests(unittest.TestCase):
                 self.assertEqual(item["candidate_error"], candidate["error"])
         self.assertEqual(compare(self.original, self.original)["changes"], [])
 
+    def test_per_task_breakdown_reconciles_fixes_regressions_and_unresolved(self):
+        def case(task, value, actual):
+            return {
+                "task": task, "args": [value], "expected": value,
+                "actual": actual, "passed": actual == value, "error": None,
+            }
+
+        before = {
+            "suite": "per-task", "total": 4, "passed": 2,
+            "cases": [
+                case("task_a", 1, 0), case("task_a", 2, 2),
+                case("task_b", 3, 0), case("task_b", 4, 4),
+            ],
+        }
+        after = copy.deepcopy(before)
+        after["cases"][0].update(actual=1, passed=True)
+        after["cases"][1].update(actual=0, passed=False)
+        after["cases"][2]["actual"] = -1
+        result = compare(before, after)
+        self.assertEqual(result["by_task"], {
+            "task_a": {
+                "total": 2, "baseline": 1, "candidate": 1,
+                "fixed": 1, "regressed": 1, "changed_failures": 0,
+            },
+            "task_b": {
+                "total": 2, "baseline": 1, "candidate": 1,
+                "fixed": 0, "regressed": 0, "changed_failures": 1,
+            },
+        })
+        for field in ("total", "baseline", "candidate", "fixed", "regressed"):
+            self.assertEqual(
+                sum(row[field] for row in result["by_task"].values()), result[field]
+            )
+        self.assertEqual(
+            sum(row["changed_failures"] for row in result["by_task"].values()),
+            len(result["changed_failures"]),
+        )
+
+    def test_real_suite_per_task_totals_match_full_report(self):
+        result = compare(self.original, self.candidate)
+        self.assertEqual(len(result["by_task"]), 10)
+        for field in ("total", "baseline", "candidate", "fixed", "regressed"):
+            self.assertEqual(
+                sum(row[field] for row in result["by_task"].values()), result[field]
+            )
+        self.assertEqual(
+            sum(row["changed_failures"] for row in result["by_task"].values()),
+            len(result["changed_failures"]),
+        )
+
     def test_outcome_taxonomy_counts_all_cases_without_changing_scores(self):
         before = {
             "suite": "descriptive-only", "passed": 1, "total": 3,

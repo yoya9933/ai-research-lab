@@ -119,7 +119,11 @@ case as passed, wrong output without error, or any reported error
 (including assertion failures and serialization diagnostics). The three
 categories sum to each report's total. They describe test outcomes,
 **not independent repair attempts**, and are not suitable for confidence
-intervals from the existing correlated cases. Output is written
+intervals from the existing correlated cases. The `by_task` breakdown
+groups the same exact cases by existing task label and reconciles each
+task's baseline/candidate passes, fixes, regressions and unresolved changes.
+These groups expose concentration of repairs; **task labels are not
+evidence of statistical independence or separate real-world root causes**. Output is written
 only after the existing same-suite validation succeeds. When saved,
 the comparison JSON includes SHA-256 hashes of the exact baseline and
 candidate input *file bytes*, read once for scoring and hashing. These
