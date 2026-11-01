@@ -38,6 +38,10 @@ This lab can measure correctness on a fixed test suite and record reproducible r
 
 Read the [experiment protocol](docs/PROTOCOL.md), [roadmap](docs/ROADMAP.md), and [contributor rules](AGENTS.md).
 
+For third-party defects, see the [real-world evidence ledger](docs/REAL_WORLD_CASES.md)
+for pinned sources, upstream acceptance status, exact local test evidence,
+preserved failures and limits on blind or general AI-performance claims.
+
 ## Post-commit follow-up
 
 Use `--suite followup` to grade 20 additional cases introduced after the first candidate was committed. Read [experiment 002](experiments/002-followup.md) for precise provenance and why the results are **not** independently blinded.
