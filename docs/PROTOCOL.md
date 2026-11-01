@@ -72,3 +72,79 @@ candidate source bytes after their recorded freeze points. The historical
 Git commits establish chronology; hashing alone does **not** prove the
 model had no prior exposure, authenticate the oracle, or prevent a reviewer
 from intentionally changing both code and checksum in a future PR.
+
+## Manual independent-assessor protocol (not yet performed)
+
+This is the **next experiment design**, not a report of a completed blinded
+trial. It requires an external human assessor who has **not** authored the
+candidate or revealed the grading assertions to the repairing conversation.
+No extra agent, model API, scheduling service, or automation is needed.
+
+1. **Pre-register and separate roles.** The assessor chooses a reproducible,
+   appropriately licensed real-world defect and privately owns independent
+   test cases and their expected outcomes. Record the external reporter and
+   pre-fix source Git SHA, license, defect family, selection rule, number of
+   planned tasks, test-generation origin, and whether the public upstream fix
+   was already seen. Publish only the task specification and visible examples
+   before candidate freeze. Do **not** upload a withheld answer key, private
+   source, secrets or identifiable assessor information into this chat.
+2. **Freeze the task and baseline first.** Pin the unmodified original
+   source and original third-party license by their Git blob IDs. Reproduce
+   visible examples on that source, including a few ordinary controls.
+   Record any baseline setup failure; never silently replace the upstream
+   snapshot or label a deliberately failing baseline a successful repair.
+3. **Run one Chat-only repair attempt.** Before reading the assessor's
+   hidden assertions, record the exact task prompt, visible evidence,
+   hypothesis, timestamp, patch and any unsuccessful attempts. Keep changes
+   in a **separate temporary candidate**, not the pinned source. Run only
+   exposed tests. Commit the candidate to Git and record both the candidate
+   commit SHA and the patch Git blob SHA. No model API or background agent.
+4. **Release independent tests only after commit freeze.** The assessor
+   records a dated release/reveal event after verifying the frozen commit
+   exists and has not moved. Only then provide publishable, legally reusable
+   held-out tests and expected outputs. If tests cannot be legally published,
+   do not claim public reproducibility or print confidential assertions into
+   public CI logs; record the visibility limitation instead.
+5. **Grade without modifying the frozen candidate.** Evaluate **the same
+   test names, input values and expected results** on the pinned baseline and
+   frozen candidate, using trusted Python standard-library test runners.
+   Record passing/total cases, *each* fixed case, *each* regression,
+   exception types, full test commands, and actual GitHub Actions run IDs.
+   Use `python -m lab.report baseline.json candidate.json` only when both
+   results use the comparator's compatible schema and identical suite.
+   Other upstream replays should use their existing isolated tests.
+   Do not execute untrusted Python through the evaluator: subprocess use is
+   **not** a security sandbox.
+6. **Freeze scores and preserve failures.** After revealing tests, never
+   revise the trial's original candidate or erase failed attempts. A revised
+   patch is a **new, explicitly post-feedback** candidate/trial, not a
+   retroactive improvement to the original grade. Preserve CI failures,
+   bad test assumptions, skipped/unavailable assertions, and reviewer
+   disagreements in an experiment log with links.
+7. **Classify exposure and statistical unit.** Mark independently authored
+   test bodies as withheld only if the assessor, not this repairing chat,
+   controlled their pre-commit access. Public upstream patches, previously
+   read tests and training-data exposure still limit any claim of
+   **blinding**. Count independent defect families or pre-registered trial
+   units for aggregate analyses, **not** hundreds of correlated test inputs.
+   Do not infer an AI improvement rate or confidence interval from one
+   candidate, one conversation, cherry-picked tasks, or a reference key.
+
+### Per-trial evidence checklist
+
+| Field | Required record |
+| --- | --- |
+| Case selection | Reporter/source URLs, license, distinct root cause, task inclusion rule |
+| Freeze | Pre-fix upstream commit and original source blobs; candidate commit and patch blob |
+| Exposure | Who authored the tests, what the chat saw before candidate commit, reveal timestamp |
+| Execution | Trusted test command, CI run URL, Python version, input-suite identity |
+| Results | Baseline and candidate case counts, individual repairs and regressions, failed cases |
+| Limits | Unchecked paths, hidden-test confidentiality, model prior exposure, exclusions |
+
+**Current status:** The [real-world case ledger](REAL_WORLD_CASES.md)
+documents reproducible **non-blind** source-attributed replays. Pygments
+original test bodies were revealed after its candidate freeze, but the
+public solution had been seen before candidate creation. No experiment
+here has yet satisfied all independent-assessor gates above; Issue #7
+must remain open. This procedure alone is **not evidence of model
+improvement**.

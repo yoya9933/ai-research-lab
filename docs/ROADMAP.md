@@ -36,6 +36,11 @@ Versions indicate scope, **not** demonstrated improvements in AI capability.
   fetched only after the candidate was committed, and 144 further
   investigator-authored input observations passed in CI. The public fix
   was already known, so neither result is a blinded ability score.
+- [x] **Manual independent-assessor procedure specified:** See
+  [protocol](PROTOCOL.md#manual-independent-assessor-protocol-not-yet-performed)
+  for candidate SHA freeze, external test custody, identical-suite grading,
+  error/feedback preservation, and exposure disclosure. No independent
+  assessor or genuinely blind trial has been completed.
 - [ ] **Not yet achieved:** Independently authored and withheld grading
   material for multiple real defects, uncontaminated repeated model trials,
   statistically defensible uncertainty estimates or a general AI-improvement
