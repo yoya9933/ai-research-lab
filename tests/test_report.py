@@ -258,6 +258,42 @@ class CompareTests(unittest.TestCase):
             self.assertNotEqual(run.returncode, 0)
             self.assertFalse(output.exists())
 
+    def test_reject_nonfinite_actual_values_in_programmatic_reports(self):
+        for number in (float("nan"), float("inf"), -float("inf")):
+            with self.subTest(value=repr(number)):
+                malformed = copy.deepcopy(self.original)
+                failed = next(case for case in malformed["cases"] if not case["passed"])
+                failed["actual"] = number
+                with self.assertRaisesRegex(ValueError, "Non-finite"):
+                    compare(malformed, self.candidate)
+
+    def test_cli_rejects_nonstandard_json_constants_before_writing_evidence(self):
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+
+        for constant in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(constant=constant), tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                before, after = root / "before.json", root / "after.json"
+                output = root / "audit.json"
+                malformed = copy.deepcopy(self.original)
+                failed = next(case for case in malformed["cases"] if not case["passed"])
+                failed["actual"] = float(constant)
+                before.write_text(json.dumps(malformed), encoding="utf-8")
+                after.write_text(json.dumps(self.candidate), encoding="utf-8")
+                self.assertIn(constant, before.read_text(encoding="utf-8"))
+                run = subprocess.run(
+                    [sys.executable, "-m", "lab.report", str(before), str(after),
+                     "--output", str(output)],
+                    text=True, capture_output=True, check=False,
+                )
+                self.assertNotEqual(run.returncode, 0)
+                self.assertIn("Non-finite", run.stderr)
+                self.assertFalse(output.exists())
+
     def test_reject_different_suites(self):
         self.candidate["suite"] = "followup"
         with self.assertRaisesRegex(ValueError, "different"):
