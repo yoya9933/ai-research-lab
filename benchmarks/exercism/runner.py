@@ -36,6 +36,15 @@ class RecordingResult(unittest.TestResult):
         super().addError(test, err)
         self.cases[-1].update(actual="error", error=self._exc_info_to_string(err, test))
 
+    def addSubTest(self, test, subtest, err):
+        super().addSubTest(test, subtest, err)
+        if err is not None:
+            case = self.cases[-1]
+            kind = "failure" if issubclass(err[0], test.failureException) else "error"
+            case["actual"] = "error" if "error" in (case["actual"], kind) else "failure"
+            detail = f"{subtest.id()}\n{self._exc_info_to_string(err, subtest)}"
+            case["error"] = "\n".join(filter(None, (case["error"], detail)))
+
     def __init__(self):
         super().__init__()
         self.cases = []

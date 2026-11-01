@@ -38,6 +38,13 @@ exercise. Existing pinned upstream suites contain no such annotations.
 This fails closed on unsupported test semantics; it does not certify
 unseen assertions or prevent contamination.
 
+The unittest runner records a **single parent test** even if the parent
+executes multiple `self.subTest()` contexts. Failed subtests are now
+attached to that parent's error text (including every failing context),
+and errors are distinguished from assertion failures; successful subtests
+do not add extra scored cases. Do not count individual subtests as
+independent defect reports or AI repair attempts.
+
 ## Temporary candidate source and Python bytecode
 
 Source-attributed bug replays copy a pinned upstream **source** subset into
