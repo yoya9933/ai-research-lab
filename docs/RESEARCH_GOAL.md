@@ -53,3 +53,7 @@ At the start of each Chat + MCP session, read this goal, the [roadmap](ROADMAP.m
 Only merge a scoped PR after the **current PR head** passes CI and meaningful tests. Preserve rejected candidates, failed CI and unresolved findings. Do not create synthetic measurements and call them real trials. No ongoing work can occur without an actual Chat/automation trigger; do not silently substitute Work or a paid API.
 
 **Important blocker:** The independent assessor and their withheld cases cannot be created or impersonated by this same repairing assistant. Preparatory code can be implemented autonomously; claims of independent evaluation must wait until that gate is genuinely satisfied.
+
+## First preregistered study artifact
+
+The initial memory treatment and exact prompts are pinned in [Study 001](STUDY_001.md). The integrity check locks the checked-in strategy file to one Git blob and prevents silent drift across future tasks. **Registration is not execution:** no evaluator-controlled tasks or results have been submitted yet.

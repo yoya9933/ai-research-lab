@@ -6,7 +6,7 @@ Our north star is [verified improvement on new tasks](RESEARCH_GOAL.md), **not m
 
 - [x] **G0 — reproducible engineering substrate:** GitHub MCP code changes, pinned source, CI regression checks and honest failure records.
 - [x] **G1a — reusable research memory documented:** [evidence-linked strategy memory](STRATEGY_MEMORY.md) with stable content to freeze before a study.
-- [ ] **G1b — freeze strategy revision:** pin memory file's exact Git blob and register the experimental prompt/tool budgets before collecting outcomes.
+- [x] **G1b — freeze strategy revision:** pin memory file's exact Git blob and register the experimental prompt/tool budgets before collecting outcomes.
 - [ ] **G2 — independent six-task pilot:** an external assessor withholds grading assertions until both Chat-only first-attempt candidates are frozen. Do not count this as a statistical demonstration.
 - [ ] **G3 — preregistered paired comparison:** evaluate 20 independent defect families against the same assessor-held scoring rules; preserve failures and compare A/B paired outcomes.
 - [ ] **G4 — domain transfer:** test whether any observed benefit transfers beyond Python debugging (for example data interpretation).
