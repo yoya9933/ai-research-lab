@@ -30,8 +30,12 @@ before/after. Do not assume every duplicate list changes serialized output:
 some may already have a canonical pattern.
 
 Run python -m unittest tests.test_pygments_3190_properties -v or the full
-standard-library unittest discovery. The hypotheses above are NOT measured
-results until independently verified by GitHub Actions.
+standard-library unittest discovery.
+[PR #52 CI](https://github.com/yoya9933/ai-research-lab/actions/runs/41286695536)
+completed **success**, verifying 144 canonical candidate patterns, identical
+literal-match semantics for baseline and candidate on the fixed probe set,
+128 duplicate-input language-preservation controls and 16 unchanged singleton
+controls. These input counts are **not** model-trial counts.
 
 ## Remaining limits
 

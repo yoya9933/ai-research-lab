@@ -28,6 +28,8 @@ regex strings should continue matching the original input words.
 
 Run `python -m unittest tests.test_pygments_3190_candidate -v`
 and `python -m unittest discover -s tests -v`.
-Check CI for actual outcomes; **no performance speedup, W117 linter pass,
-upstream package-wide correctness, or AI-repair ability improvement** is
-claimed without independent evidence.
+[PR #50 CI](https://github.com/yoya9933/ai-research-lab/actions/runs/41286237343)
+and [merged main CI](https://github.com/yoya9933/ai-research-lab/actions/runs/41286264647)
+both completed **success**: three duplicate-pattern records changed and four
+controls did not. No performance speedup, W117 linter pass, upstream
+package-wide correctness, or AI-repair ability improvement is claimed.

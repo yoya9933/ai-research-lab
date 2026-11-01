@@ -21,6 +21,4 @@ Date: 2026-11-01. External project `pygments/pygments`.
 - Commands: `python -m benchmarks.bugs.pygments_3190.reproduce` and
   `python -m unittest tests.test_pygments_3190 -v` under the full GitHub
   Actions standard-library test discovery.
-- Results: **await CI**. If any original behavior differs, preserve the
-  failure and revisit the hypothesis. Baseline passing is reproduction,
-  not repair, and no performance/throughput claim is tested.
+- **Observed:** [PR #49 CI](https://github.com/yoya9933/ai-research-lab/actions/runs/41286145914) completed **success**. Three duplicate-input anomalies, four controls and the source/license Git blob checks were confirmed. Baseline passing is reproduction, not a repair; no performance/throughput or regex-linter claim.

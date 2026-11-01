@@ -22,7 +22,11 @@ Date: 2026-11-01. **Not blind**: the accepted upstream fix
   suppresses the original tests' `print` statements for JSON capture,
   preserving all their original assertions.
 - Reproduce with `python -m unittest tests.test_pygments_3190_upstream -v`.
-  Do not report actual counts until GitHub Actions proves them.
+  [Corrected PR #51 CI](https://github.com/yoya9933/ai-research-lab/actions/runs/41286548196)
+  and [merged main CI](https://github.com/yoya9933/ai-research-lab/actions/runs/41286575592)
+  completed **success**. The two original externally authored test functions
+  failed on the frozen baseline (0/2) and passed on the unchanged candidate
+  (2/2).
 
 Limits: This imports two original third-party test functions, **not the
 complete upstream test suite**. Source/test exposure order is better
