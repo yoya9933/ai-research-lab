@@ -23,8 +23,8 @@ Versions indicate scope, **not** demonstrated improvements in AI capability.
 
 ## External bug corpus status (2026-11-01)
 
-- [x] **Non-blind reproducibility milestone:** Seven distinct locally replayed
-  defect families across four upstream projects (counting humanize #20/#30 as
+- [x] **Non-blind reproducibility milestone:** Eight distinct locally replayed
+  defect families across five upstream projects (counting humanize #20/#30 as
   one family, and explicitly flagging unmerged humanize PR #486). Sources,
   licenses, pinned commits, candidate comparisons and statuses are audited in
   [the evidence ledger](REAL_WORLD_CASES.md).
@@ -32,6 +32,10 @@ Versions indicate scope, **not** demonstrated improvements in AI capability.
   input pairs validated after the candidate was committed; the frozen
   candidate source is hash-checked. Boltons and tokenize-rt retained their
   unsuccessful post-freeze property outcomes and separate later candidates.
+- [x] **Pygments exposure chronology:** Two original third-party tests were
+  fetched only after the candidate was committed, and 144 further
+  investigator-authored input observations passed in CI. The public fix
+  was already known, so neither result is a blinded ability score.
 - [ ] **Not yet achieved:** Independently authored and withheld grading
   material for multiple real defects, uncontaminated repeated model trials,
   statistically defensible uncertainty estimates or a general AI-improvement
