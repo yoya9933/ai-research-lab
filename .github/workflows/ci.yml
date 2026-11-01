@@ -61,3 +61,5 @@ jobs:
         run: python -m benchmarks.bugs.more_itertools_1342.reproduce
       - name: Check isolated more-itertools boundary candidate and error messages
         run: python -m unittest tests.test_more_itertools_1342_candidate -v
+      - name: Record post-freeze more-itertools bounded property results
+        run: python -m benchmarks.bugs.more_itertools_1342.followup

@@ -29,3 +29,24 @@ validation error before touching the source.
 These tests are investigator-authored with the upstream solution already
 public. This is **not blind**, not a model performance trial, and not a
 complete upstream-package regression run.
+
+## Post-commit bounded regression checks (not blind)
+
+The first local candidate was frozen in commit
+`33cd99acfdf62b13033db865f4b0302a6a7ebd96` before
+`followup.py` was authored. Its file is hash-verified by the existing frozen
+candidate source test. The **same** new script evaluates both the unchanged
+baseline and frozen candidate: `n=1..14`, input lengths `0..40`, i.e.
+**574 correlated combinations per variant**. The oracle checks exact
+flattened input order/content, nonempty chunks of size at most `n`,
+and at most one item's difference across chunk sizes.
+
+Two additional deliberately poisonous inputs check that zero and negative
+sizes are rejected/handled before the object's `__iter__` method is
+called. These were **not** part of the original ten-case suite.
+
+Run `python -m benchmarks.bugs.more_itertools_1342.followup` or
+`python -m unittest tests.test_more_itertools_1342_followup -v`. The
+report exposes baseline and candidate summaries and *all* observed failures.
+This is a post-commit **conversation-exposure** check, not an independent
+blind evaluation or a proof for inputs beyond the bounded domain.

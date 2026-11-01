@@ -49,3 +49,18 @@ other `more-itertools` functions remain unchecked.
 seen before writing this code. Newly written assertions are not hidden,
 the excerpt is not the full source tree, and pretrained knowledge cannot
 be excluded. No external model API or paid inference was used.
+
+## Post-freeze follow-up
+
+The accepted-fix candidate was frozen at commit
+`33cd99acfdf62b13033db865f4b0302a6a7ebd96` before the new
+`followup.py` was authored. The frozen patch source Git blob is
+`b26e35b35a8911e8a117e3f7f10a703291b4b585`; the standard
+frozen-source integrity test now verifies this local copy.
+The separate, investigator-authored suite replays exactly the same 574
+positive-size/length combinations against both baseline and candidate,
+with an independent flattening, chunk-size, and size-balance oracle.
+It also probes zero and negative sizes with an iterable that raises on
+any `__iter__` access. Failures are returned and displayed, not silently
+dropped. Results require actual GitHub Actions execution, and no
+pretraining-independence or blind-test status is claimed.

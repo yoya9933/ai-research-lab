@@ -27,6 +27,10 @@ FROZEN_BLOBS = {
         "778fa86aebcf6c525eec2f711b04c1ec0f671a2a",
     "benchmarks/bugs/tokenize_rt_33/patch_roundtrip.py":
         "e85619f2dbc03545cfdb7d3c8cb98181e8df2398",
+    # More-itertools candidate committed before the 574-case follow-up suite:
+    # 33cd99acfdf62b13033db865f4b0302a6a7ebd96.
+    "benchmarks/bugs/more_itertools_1342/patch.py":
+        "b26e35b35a8911e8a117e3f7f10a703291b4b585",
 }
 
 
