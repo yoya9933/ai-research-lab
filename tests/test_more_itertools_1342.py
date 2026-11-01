@@ -26,7 +26,7 @@ class MoreItertools1342BaselineTests(unittest.TestCase):
     def test_pinned_excerpt_integrity(self):
         content = (VENDOR / "chunked_even.py").read_bytes()
         self.assertEqual(
-            sha1(f"blob {len(content)}\\0".encode("ascii") + content).hexdigest(),
+            sha1(f"blob {len(content)}\0".encode("ascii") + content).hexdigest(),
             SOURCE_GIT_BLOB,
         )
 
