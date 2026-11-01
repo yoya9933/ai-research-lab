@@ -60,7 +60,12 @@ input, expected output and both actual/error outcomes. It separately
 lists `changed_failures`: cases that **still fail on both versions**
 but now return a different wrong value or error. Such cases do **not**
 count as repairs or pass-to-fail regressions; recording them preserves
-unsuccessful debugging evidence.
+unsuccessful debugging evidence. The same JSON also includes
+`outcome_counts` (passed, wrong output without an error, and recorded
+error) for both versions; these sum to the original case count.
+A `reported_error` can be a unittest assertion failure or a diagnostic
+such as non-JSON output, **not necessarily an uncaught Python exception**.
+These are descriptive observations, not independent model trials.
 It rejects different suites, altered inputs/expected values, and
 inconsistent reported totals; invalid comparisons never write the
 requested output. The CLI also refuses an `--output` path that would
