@@ -30,11 +30,19 @@ class RecordingResult(unittest.TestResult):
 
     def addFailure(self, test, err):
         super().addFailure(test, err)
-        self.cases[-1].update(actual="failure", error=self._exc_info_to_string(err, test))
+        case = self.cases[-1]
+        case["actual"] = "error" if case["actual"] == "error" else "failure"
+        case["error"] = "\n".join(filter(
+            None, (case["error"], self._exc_info_to_string(err, test))
+        ))
 
     def addError(self, test, err):
         super().addError(test, err)
-        self.cases[-1].update(actual="error", error=self._exc_info_to_string(err, test))
+        case = self.cases[-1]
+        case["actual"] = "error"
+        case["error"] = "\n".join(filter(
+            None, (case["error"], self._exc_info_to_string(err, test))
+        ))
 
     def addSubTest(self, test, subtest, err):
         super().addSubTest(test, subtest, err)
