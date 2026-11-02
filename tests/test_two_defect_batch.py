@@ -1,4 +1,9 @@
 """Two externally reported, nonblind defects; same inputs on original/candidate."""
+import ast
+from collections.abc import Sequence
+from functools import cached_property, partial
+from itertools import count, takewhile
+from operator import gt, lt
 import importlib.util
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -29,16 +34,47 @@ def observe_lru(path):
             "getitem": cache["a"],
             "dict": dict(cache)["a"],
             "values": dict(cache).get("a"),
-            "eviction": sorted(cache.keys()),
         }
+        before = set(cache)
         cache["c"] = 3
-        result[typ.__name__]["size"] = len(cache)
-        result[typ.__name__]["new"] = cache["c"]
+        after = set(cache)
+        result[typ.__name__].update({
+            "eviction": sorted(before - after),
+            "remaining": sorted(after),
+            "size": len(cache),
+            "new": cache["c"],
+        })
     return result
 
 
-def observe_range(path):
-    R = load_module(path, "replay_numeric_range").numeric_range
+def load_pristine_numeric_range(path):
+    """Execute the upstream class AST with only its needed stdlib imports.
+
+    The pristine more.py is not a standalone module (it imports .recipes).
+    This is a constrained class replay, not a full upstream package test.
+    """
+    source = path.read_text(encoding="utf-8")
+    classes = [
+        node for node in ast.parse(source, filename=str(path)).body
+        if isinstance(node, ast.ClassDef) and node.name == "numeric_range"
+    ]
+    if len(classes) != 1:
+        raise ValueError("Expected exactly one pinned upstream numeric_range class")
+    namespace = {
+        "__name__": "pinned_more_itertools_class",
+        "Sequence": Sequence,
+        "cached_property": cached_property,
+        "partial": partial,
+        "count": count,
+        "takewhile": takewhile,
+        "gt": gt,
+        "lt": lt,
+    }
+    exec(compile(ast.Module(body=classes, type_ignores=[]), str(path), "exec"), namespace)
+    return namespace["numeric_range"]
+
+
+def observe_range(R):
     pairs = [
         (R(2, 3, 1), R(2, 3, 5)),
         (R(1, 2, 1), R(1, 2, 6)),
@@ -65,15 +101,21 @@ class TwoDefectBatchTests(unittest.TestCase):
                 self.assertEqual(fixed[typ]["dict"], 200)
                 self.assertEqual(fixed[typ]["values"], 200)
                 self.assertEqual(fixed[typ]["getitem"], 200)
+                self.assertEqual(original[typ]["size"], 2)
                 self.assertEqual(fixed[typ]["size"], 2)
                 self.assertEqual(fixed[typ]["new"], 3)
-                self.assertEqual(fixed[typ]["eviction"], original[typ]["eviction"])
+                # The overflow insertion must evict b, not a or the new c.
+                for observed in (original[typ], fixed[typ]):
+                    self.assertEqual(observed["eviction"], ["b"])
+                    self.assertEqual(observed["remaining"], ["a", "c"])
 
     def test_numeric_range_original_fails_and_candidate_corrects(self):
-        source = ROOT / "more_itertools_1214" / "upstream" / "numeric_range.py"
-        original = observe_range(source)
+        source = ROOT / "more_itertools_1214" / "upstream" / "more_itertools" / "more.py"
+        original = observe_range(load_pristine_numeric_range(source))
         with TemporaryDirectory() as tmp:
-            fixed = observe_range(range_candidate(Path(tmp) / "fixed"))
+            fixed = observe_range(
+                load_module(range_candidate(Path(tmp) / "fixed"), "fixed_numeric_range").numeric_range
+            )
         self.assertEqual([x["equal"] for x in original], [False, False, False, False, True])
         self.assertEqual([x["equal"] for x in fixed], [True, True, True, False, True])
         for item in fixed[:3]:
@@ -83,8 +125,8 @@ class TwoDefectBatchTests(unittest.TestCase):
             self.assertEqual(original[i], fixed[i])
 
     def test_nonblind_negative_controls(self):
-        source = ROOT / "more_itertools_1214" / "upstream" / "numeric_range.py"
-        R = load_module(source, "range_negative_controls").numeric_range
+        source = ROOT / "more_itertools_1214" / "upstream" / "more_itertools" / "more.py"
+        R = load_pristine_numeric_range(source)
         self.assertNotEqual(R(0, 2, 1), R(0, 2, 2))
         self.assertEqual(R(0, 0), R(20, 20, 5))
 

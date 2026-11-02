@@ -1,4 +1,5 @@
-"""Pin two upstream source snapshots and isolate original from candidate code."""
+"""Pin pristine upstream sources separately from derived replay and candidates."""
+import ast
 from hashlib import sha1
 from pathlib import Path
 import unittest
@@ -9,6 +10,10 @@ SOURCES = {
         "27a19cb9e63b41663d7ad500c67a0485d55ade13",
     "benchmarks/bugs/boltons_348/LICENSE":
         "6a4c9d2496f53c61c99ae7c113e6ed94b15b038c",
+    # This is the pristine, complete module from upstream at the pinned commit.
+    "benchmarks/bugs/more_itertools_1214/upstream/more_itertools/more.py":
+        "7ce276ac417426a419e84d31fe73e4681e81f973",
+    # The historical standalone replay was derived by minimizing imports.
     "benchmarks/bugs/more_itertools_1214/upstream/numeric_range.py":
         "e207d3e6742042c39f88a617c7e665788ce255c6",
     "benchmarks/bugs/more_itertools_1214/LICENSE":
@@ -25,6 +30,23 @@ class BatchSourceIntegrityTests(unittest.TestCase):
                     sha1(f"blob {len(content)}\0".encode() + content).hexdigest(),
                     expected,
                 )
+
+    def test_pristine_numeric_range_class_matches_standalone_replay(self):
+        case = ROOT / "benchmarks" / "bugs" / "more_itertools_1214" / "upstream"
+        pristine = case / "more_itertools" / "more.py"
+        replay = case / "numeric_range.py"
+
+        def class_source(path):
+            source = path.read_text(encoding="utf-8")
+            classes = [
+                node for node in ast.parse(source, filename=str(path)).body
+                if isinstance(node, ast.ClassDef) and node.name == "numeric_range"
+            ]
+            self.assertEqual(len(classes), 1)
+            return ast.get_source_segment(source, classes[0])
+
+        # Same exact class text, but distinct import context and file provenance.
+        self.assertEqual(class_source(pristine), class_source(replay))
 
 
 if __name__ == "__main__":
