@@ -27,3 +27,38 @@ The full repository CI also executes `python -m unittest discover -s tests -v`.
 - Original external issue reporters are not the authors of our local tests; avoid counting these as independent blind tasks.
 
 **Outcome field:** fill with actual PR CI outcome and failures; do not claim success merely because a candidate commit exists.
+
+## Post-merge PR #86 P1 provenance and eviction audit (2026-11-02)
+
+The historical claim above about the class excerpt must **not** be read as
+authentication of a complete, unmodified upstream module. At PR #86 merge,
+`upstream/numeric_range.py` was already a **derived standalone replay**:
+its class body was copied verbatim but imports were minimized; its local
+blob hash `e207d3e6742042c39f88a617c7e665788ce255c6` pinned those
+derived bytes, not the complete upstream source.
+
+The subsequent audit vendors pristine `upstream/more_itertools/more.py`
+exactly as Git blob `7ce276ac417426a419e84d31fe73e4681e81f973`
+from upstream commit `07eb790b4aa1aee88d78963fc4f740b03a9fb4a1`.
+The source-integrity test pins that blob **and** independently verifies
+that the numeric_range class body matches the historical replay exactly.
+The baseline test now compiles only the pristine class AST with its required
+standard-library imports, since the complete upstream module imports
+`.recipes` and is not independently importable without the full package.
+This verifies a source-identical **class-level reproduction**, not full
+upstream-distribution integration or upstream-suite success.
+
+The derived replay retains its legacy path so frozen
+`more_itertools_1214/patch.py` continues to read **unchanged** input.
+Neither first-attempt patch wrapper was edited; the original candidate-freeze
+commit, local grading chronology, and earlier limitations stand.
+
+The cache check now captures keys **after** inserting the overflowing
+`"c"` entry, and explicitly checks `"b"` was evicted, `"a"` and
+`"c"` remain, and capacity is exactly two, for original and candidate
+LRU/LRI. Thus a wrong linked-list eviction order fails the test rather
+than passing through pre-overflow observations.
+
+These are post-merge quality corrections to public, investigator-authored
+replays. **G2 remains 0/6**: no independent assessor-held hidden scores,
+blinded comparison, or new first-attempt candidates were established.
